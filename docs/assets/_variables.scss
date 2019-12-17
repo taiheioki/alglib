@@ -1,0 +1,5 @@
+// Prevent changing visited link color
+$color-visited-link: $color-link;
+
+// Change breakpoint
+$sm-breakpoint: $menu-width + $body-min-width + $toc-width;

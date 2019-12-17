@@ -1,0 +1,29 @@
+<!-- arguments -->
+{{ $file := .Get "file" }}
+{{ $start := .Get "start" }}
+{{ $end := .Get "end" }}
+
+<!-- read C++ source code -->
+{{ $code := $file | printf "assets/include/alglib/%s" | readFile }}
+{{ $lines := split $code "\n" | first $end | after (sub $start 1) }}
+{{ $code := delimit $lines "\n" }}
+
+<!-- output highlight -->
+<figure class="code">
+  {{ $url_leaf := printf "%s#L%d-L%d" $file $start $end }}
+  {{ $url := path.Join "https://github.com/natrium11321/alglib/blob/master/include/alglib/" $url_leaf }}
+  {{ $id := replaceRE "/|\\.|#" "-" $url_leaf }}
+  <figcaption class="code-caption">
+    <a target="_blank" rel="noopener noreferrer" href={{ $url }}><span class="fab fa-github"></span>{{ $url_leaf }}</a>
+    <span style="position: relative;">
+      <button type="button" class="copy-button" data-clipboard-target="#{{ $id }}">
+        <span class="fas fa-copy"></span>Copy
+      </button>
+      <span class="tooltip">Copied!</span>
+    </span>
+  </figcaption>
+  <pre class="copy-text" id="{{ $id }}">{{ $code | htmlEscape | safeHTML }}</pre> 
+  <!-- {{ $option := printf "linenostart=%d" $start }} -->
+  {{ $option := "linenostart=1" }}
+  {{ highlight $code "cpp" $option }}
+</figure>
