@@ -19,7 +19,7 @@
       <button type="button" class="copy-button" data-clipboard-target="#{{ $id }}">
         <span class="fas fa-copy"></span>Copy
       </button>
-      <span class="tooltip">Copied!</span>
+      <div class="tooltip">Copied!</div>
     </span>
   </figcaption>
   <pre class="copy-text" id="{{ $id }}">{{ $code | htmlEscape | safeHTML }}</pre> 

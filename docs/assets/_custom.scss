@@ -1,4 +1,17 @@
-// hyperlinks
+// Fonts
+body {
+  font-family: Roboto, YakuHanJP_Noto, 'Noto Sans JP', sans-serif;
+  text-align: justify;
+  text-justify: inter-ideograph;
+  word-break: break-all;
+}
+
+#algorithm-library, .book-brand {
+  letter-spacing: 0.1em;
+  font-variant-caps: small-caps;
+}
+
+// Hyperlinks
 a {
   transition: 0.3s;
   
@@ -21,9 +34,8 @@ ol {
     position: relative;
     
     &::before{
-      color: $gray-600;
       counter-increment: list;
-      content: "[" counter(list) "] ";
+      content: '[' counter(list) '] ';
       left: -1.4em;
       position: absolute;
     }
@@ -39,10 +51,14 @@ thead {
   background-color: $gray-200;
   th {
     font-weight: normal;
+    text-align: center;
   }
 }
 
 // For code highlight
+code {
+  letter-spacing: normal;
+}
 .highlight {
   font-size: 90%;
   line-height: 1.2em;
@@ -62,6 +78,7 @@ figcaption.code-caption {
   color: $gray-700;
   font-family: 'Roboto Mono', monospace;
   font-size: 80%;
+  letter-spacing: normal;
   line-height: 1em;
   margin-bottom: 0.5em;
   margin-left: 1em;
@@ -77,12 +94,13 @@ figcaption.code-caption {
 // Copy button
 .copy-button {
   background-color: white;
-  border: $padding-1 solid $color-link;
+  border: 1px solid $color-link;
   border-radius: $border-radius;
   color: $color-link;
-  outline: 0;
   cursor: pointer;
   font-size: 90%;
+  outline: 0;
+  padding: 0.1em 0.5em;
   
   &:active {
     background-color: #b3d9ff;
@@ -102,16 +120,17 @@ figcaption.code-caption {
   background-color: $body-font-color;
   color: white;
   display: inline-block;
-  font-family: 'Roboto', sans-serif;
+  font-family: Roboto, sans-serif;
   font-size: 89%;
   left: 50%;
   padding: 0.5em 1em;
   position: absolute;
   top: -2.65em;
   transform: translate(-50%, 0);
+  word-break: normal;
   
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 95%;
     left: 50%;
