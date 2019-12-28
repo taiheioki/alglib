@@ -1,2 +1,14 @@
-{{ $html := .Inner | markdownify }}
-{{ replace $html "<ol>" "<ol class=\"ref\">" | safeHTML }}
+{{ $refs := split (trim .Inner "\n") "\n" }}
+
+<ol class="ref">
+  {{ range $ref := $refs }}
+    {{ $tags := findRE "^{#.*}" $ref }}
+    {{ with index $tags 0 }}
+      {{ $tag := trim . "{#}" }}
+      {{ $text := after (len .) $ref }}
+      <li id="{{ $tag }}">{{ $text | markdownify }}
+    {{ else }}
+      <li>{{ $ref | markdownify }}
+    {{ end }}
+  {{ end }}
+</ol>

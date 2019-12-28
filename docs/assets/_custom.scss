@@ -33,13 +33,33 @@ ol.ref {
   li {
     position: relative;
     
-    &::before{
+    &::before {
       counter-increment: list;
       content: '[' counter(list) '] ';
       left: -1.4em;
       position: absolute;
     }
+    
+    &:target {
+      animation: fade-highlight 3s;
+    }
   }
+}
+
+@keyframes fade-highlight {
+  from {
+    background-color: $color-highlight;
+  }
+  75% {
+    background-color: $color-highlight;
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+a.cite {
+  color: $body-font-color;
 }
 
 // Tables
@@ -49,7 +69,7 @@ ol.ref {
   font-size: 0.9375rem;
   
   thead {
-    background-color: $gray-200;
+    background-color: $gray-100;
     th {
       text-align: center;
     }
@@ -107,7 +127,7 @@ figcaption.code-caption {
   animation: fade-tooltip .5s 1s 1 forwards;
   border-radius: $border-radius * 2;
   background-color: $body-font-color;
-  color: white;
+  color: $white;
   display: inline-block;
   font-family: Roboto, sans-serif;
   font-size: 89%;
@@ -159,7 +179,7 @@ ol.highlight {
     display: table-row;
     
     &:hover {
-      background-color: #FFFCD7;
+      background-color: $color-highlight;
       color: $body-font-color;
     }
     

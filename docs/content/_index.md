@@ -15,7 +15,7 @@ type: docs
 下記の書籍および Web サイトを参考にしています．
 
 {{< references >}}
-1. 秋葉拓哉，岩田陽一，北川宜稔．プログラミングコンテストチャレンジブック（第 2 版）．マイナビ出版，東京，2012.
-1. cpprefjp - C++ 日本語リファレンス．[https://cpprefjp.github.io/](https://cpprefjp.github.io/)
-1. 各種アルゴリズムの C++ による実装，Spaghetti Source. [http://www.prefield.com/algorithm/](http://www.prefield.com/algorithm/)
+{#AIK2012}   秋葉拓哉，岩田陽一，北川宜稔．プログラミングコンテストチャレンジブック（第 2 版）．マイナビ出版，東京，2012.
+{#cpprefjp}  cpprefjp - C++ 日本語リファレンス．[https://cpprefjp.github.io/](https://cpprefjp.github.io/)
+{#spaghetti} 各種アルゴリズムの C++ による実装，Spaghetti Source. [http://www.prefield.com/algorithm/](http://www.prefield.com/algorithm/)
 {{< /references >}}
