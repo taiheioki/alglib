@@ -1,18 +1,25 @@
-<!-- arguments -->
+<!-- Arguments -->
 {{ $file := .Get "file" }}
 {{ $start := .Get "start" }}
 {{ $end := .Get "end" }}
 
-<!-- read C++ source code -->
+<!-- Read C++ source code -->
 {{ $code := $file | printf "assets/include/alglib/%s" | readFile }}
 {{ $lines := split $code "\n" | first $end | after (sub $start 1) }}
 {{ $code := delimit $lines "\n" }}
+  
+<!-- Convert raw code to highlight code -->
+{{ $hl_code := highlight $code "cpp" "" | findRE "<code.*>(.|\n)*</code>" }}
+{{ $hl_code := index $hl_code 0 | replaceRE "\n?</?code.*>\n?" "" }}
+{{ $hl_code := replace $hl_code "font-style:italic" "font-weight:bold" }}
+{{ $hl_lines := split $hl_code "\n" }}
 
-<!-- output highlight -->
 <figure class="code">
   {{ $url_leaf := printf "%s#L%d-L%d" $file $start $end }}
   {{ $url := path.Join "https://github.com/natrium11321/alglib/blob/master/include/alglib/" $url_leaf }}
   {{ $id := replaceRE "/|\\.|#" "-" $url_leaf }}
+  
+  <!-- Output caption -->
   <figcaption class="code-caption">
     <a target="_blank" rel="noopener noreferrer" href={{ $url }}><span class="fab fa-github"></span>{{ $url_leaf }}</a>
     <span style="position: relative;">
@@ -22,8 +29,12 @@
       <div class="tooltip">Copied!</div>
     </span>
   </figcaption>
-  <pre class="copy-text" id="{{ $id }}">{{ $code | htmlEscape | safeHTML }}</pre> 
-  <!-- {{ $option := printf "linenostart=%d" $start }} -->
-  {{ $option := "linenostart=1" }}
-  {{ highlight $code "cpp" $option }}
+  <pre class="copy-text" id="{{ $id }}">{{ $code | htmlEscape | safeHTML }}</pre>
+  
+  <!-- Output highlight code -->
+  <ol class="highlight">
+    {{ range $hl_line := $hl_lines }}
+      <li><pre><code>{{ $hl_line | safeHTML }}</code></pre>
+    {{ end }}
+  </ol>
 </figure>

@@ -1,0 +1,2 @@
+{{ $html := .Inner | markdownify }}
+{{ replace $html "<ol>" "<ol class=\"ref\">" | safeHTML }}

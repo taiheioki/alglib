@@ -26,11 +26,11 @@ a {
 }
 
 // References
-ol {
+ol.ref {
   counter-reset: list;
+  list-style: none;
   
   li {
-    list-style-type: none;
     position: relative;
     
     &::before{
@@ -46,42 +46,31 @@ ol {
 .markdown table {
   display: table;
   margin: auto;
-}
-thead {
-  background-color: $gray-200;
-  th {
-    font-weight: normal;
-    text-align: center;
-  }
-}
-
-// For code highlight
-code {
-  letter-spacing: normal;
-}
-.highlight {
-  font-size: 90%;
-  line-height: 1.2em;
+  font-size: 0.9375rem;
   
-  pre {
-    padding-top: 0;
-    padding-bottom: 0;
+  thead {
+    background-color: $gray-200;
+    th {
+      text-align: center;
+    }
   }
 }
 
+// Code area
 figure.code {
+  font-family: 'Roboto Mono', monospace;
   margin: 1em 0;
+  padding-left: 1em;
+  word-break: normal;
 }
 
 // Caption
 figcaption.code-caption {
   color: $gray-700;
-  font-family: 'Roboto Mono', monospace;
   font-size: 80%;
   letter-spacing: normal;
   line-height: 1em;
-  margin-bottom: 0.5em;
-  margin-left: 1em;
+  margin: 0.4em 0.2em;
   
   .fa-github {
     padding-right: 0.3em;
@@ -154,8 +143,84 @@ figcaption.code-caption {
   top: -1000000vw;
 }
 
+// Code highlight
+ol.highlight {
+  counter-reset: lineno;
+  display: table;
+  font-size: 0.9em;
+  line-height: 1.1em;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  
+  li {
+    color: $gray-500;
+    counter-increment: lineno;
+    display: table-row;
+    
+    &:hover {
+      background-color: #FFFCD7;
+      color: $body-font-color;
+    }
+    
+    &::before {
+      content: counter(lineno);
+      display: table-cell;
+      padding-right: 0.5em;
+      text-align: right;
+      width: 1px;
+    }
+    
+    pre {
+      background-color: transparent;
+      color: $body-font-color;
+      display: inline;
+      padding: 0;
+      white-space: pre-wrap;
+    }
+  }
+}
+
 // Footer
 .footer {
   float: right;
   font-size: 70%;
+}
+
+// Tablet screens
+@media screen and (max-width: $md-breakpoint) {
+  .book-menu {
+    margin-left: -$menu-width;
+    font-size: $font-size-base;
+  }
+  
+  .book-header {
+    display: flex;
+  }
+  
+  #menu-control:checked + main {
+    .book-menu nav, .book-page {
+      transform: translateX($menu-width);
+    }
+    
+    .book-header label {
+      transform: rotate(90deg);
+    }
+    
+    .markdown {
+      opacity: 0.25;
+    }
+  }
+  
+  // Make the left padding of code 0
+  figure.code {
+    padding: 0;
+  }
+}
+
+// Smartphone screens
+@media screen and (max-width: $sm-breakpoint) {
+  body {
+    font-size: 0.9375rem;
+  }
 }
