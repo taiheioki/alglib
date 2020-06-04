@@ -1,25 +1,25 @@
-#ifndef _ALGLIB_MATRIX_HPP_
-#define _ALGLIB_MATRIX_HPP_
+#ifndef ALGLIB_LINALG_MATRIX_HPP_
+#define ALGLIB_LINALG_MATRIX_HPP_
 
 #include <vector>
 
 namespace alg
 {
-
+// BEGIN CUT algebra/linalg
 template<typename R>
 class Vector : public std::vector<R>
 {
 public:
-    
 };
 
 template<typename R>
 class Matrix
 {
-public:
-    int rows();
+public
+    a int rows();
 };
+// END CUT
 
-} // end of namespace alg
+}  // namespace alg
 
 #endif

@@ -22,4 +22,4 @@ weight: 1
 ## ソースコード
 以下の実装は
 
-{{< code file="algebra/matrix.hpp" start=9 end=21 >}}
+{{< code file="linalg/matrix.hpp" start=9 end=21 >}}

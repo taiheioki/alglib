@@ -68,10 +68,24 @@ a.cite {
   margin: auto;
   font-size: 0.9375rem;
   
-  thead {
-    background-color: $gray-100;
+  tr {
+    th, td {
+      max-width: 120%;
+    }
     th {
-      text-align: center;
+      border: none;
+    }
+    td {
+      background-color: $white;
+      border-bottom: none;
+      border-color: $gray-500;
+      border-left: none;
+      border-right: none;
+      border-width: 1px;
+    }
+    &:nth-child(1) td {
+      border-color: $gray-700;
+      border-width: 1px;
     }
   }
 }

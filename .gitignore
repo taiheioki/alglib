@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# Editor setting files
+.vscode
+
 # Hugo outputs
 docs/public
 docs/resources/_gen

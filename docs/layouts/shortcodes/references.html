@@ -2,13 +2,15 @@
 
 <ol class="ref">
   {{ range $ref := $refs }}
-    {{ $tags := findRE "^{#.*}" $ref }}
-    {{ with index $tags 0 }}
-      {{ $tag := trim . "{#}" }}
-      {{ $text := after (len .) $ref }}
-      <li id="{{ $tag }}">{{ $text | markdownify }}
-    {{ else }}
-      <li>{{ $ref | markdownify }}
-    {{ end }}
+    {{ $tags := findRE "^{#[^}]*}" $ref }}
+    {{ $text := $ref }}
+    <li
+      {{ with index $tags 0 }}
+        {{ $text = substr $ref (len .) }}
+        id="{{ trim . "{#}" }}"
+      {{ end }}
+    >
+      {{ $text | $.Page.RenderString | safeHTML }}
+    </li>
   {{ end }}
 </ol>
