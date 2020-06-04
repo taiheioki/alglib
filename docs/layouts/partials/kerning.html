@@ -1,0 +1,118 @@
+{{ $text := . }}
+
+{{ if not (eq site.Language.Lang "en") }}
+  {{ $opening_brackets := "[（〔［｛〈《「『【｟〘〖]" }} <!-- （ -->
+  {{ $closing_brackets := "[）〕］｝〉》」』】｠〙〗]" }} <!-- ） -->
+  {{ $hyphens := "[‐〜゠–]" }} <!-- - -->
+  {{ $dividing_punctuation_marks := "[！？‼⁇⁈⁉]" }} <!-- ！ -->
+  {{ $middle_dots := "[・：；]" }} <!-- ・ -->
+  {{ $full_stops := "[。．]" }} <!-- ． -->
+  {{ $commas := "[、，]" }} <!-- ， -->
+  {{ $japanese := "\\p{Hiragana}|\\p{Katakana}|\\p{Han}|[※℡Ⅰ-Ⅻⅰ-ⅻ⊿◉☖☗♨⦿〃〆〇〓〠〼〽ゟヿ㈱㈲㈹㊤-㊨㋐-㋣㋥㋩㋬㋭㋺㍻-㍾㏍仝＆＊／-９＠-Ｚ＼ａ-ｚ｜]" }}
+  {{ $western := "(?:&[^;]*;)|[!-,.-;=?-~¡-¦¨ª-­¯-´·-»¿-ĉČ-ďđ-ēĘ-ĝĤĥħĪīĴĵĹĺĽľŁ-ńŇňŋ-ōŐ-ŕŘ-ťŪ-űŹ-žƓǂǍǎǐ-ǒǔǖǘǚǜǸǹǽɐ-ɚɜɞ-ɡɤ-ɨɬ-ɳɵɹ-ɻɽɾʁ-ʄʈ-ʎʐ-ʒʔʕʘʝʡʢˇˈˌːˑ˘˙˛˝˞˥-˩̀-̘̄̆̈̋̌̏-̜̚-̴̠̤̥̩̪̬̯̰̹-̽͡Α-ΡΣ-Ωάέα-ωЁА-яёḾḿὰὲ‐–—‘’“”‥‰′″‾‿€ℏ℧ℵ⇒⇔∀∂∃∅∇-∉∋−∓∝∠∥-∪∮∽≃≅≈≒≠-≢≦≧≪≫≶≷⊂-⊇⊊⊋⊕⊗⊥⋚⋛⌅⌆⌒]" }}
+
+  {{ $western_with_angular_brackets_and_hyphen := printf "%s|[-<>]" $western }}
+  {{ $pattern_western := printf "((%[1]s)((%[1]s)|([ \\n]))*(%[1]s))|(%[1]s)" $western_with_angular_brackets_and_hyphen }}
+  {{ $replacement_western := "<span lang=en-us class=en-us>$0</span>" }}
+
+  {{ $japanese_all := delimit (slice $opening_brackets $closing_brackets $hyphens $dividing_punctuation_marks $middle_dots $full_stops $commas $japanese) "|" }}
+  {{ $pattern_remove_linebreaks := "((?:%s)(?:<[^<>]*>)*)[\\n]+((?:<[^<>]*>)*(?:%s))" }}
+
+  {{ $pattern_removing_tags := "(%s)((?:(?:<[^<>]*>)|[ ])*(%s))" }}
+
+  <!-- Array of tags whose contents are processed -->
+  {{ $tags := slice "p" "li" "td" "h1" "h2" "h3" "h4" "h5" "h6" }}
+  {{ $tags_pattern := delimit $tags "|" | printf "<(%s)" }}
+
+  <!-- For every tag -->
+  {{ range $tag := $tags }}
+    {{ $pattern := printf "<%[1]s[^>]*>(?:.|\\n)*?<\\/%[1]s>" $tag }}
+    {{ $paragraphs := findRE $pattern $text | uniq }}
+
+    <!-- For every paragraph -->
+    {{ range $paragraph := $paragraphs }}
+      <!-- Remove surrounding tags -->
+      {{ $tag_begin := index (findRE "^<[^<>]*>" $paragraph 1) 0 }}
+      {{ $tag_end := index (findRE "<[^<>]*>$" $paragraph 1) 0 }}
+      {{ $len := sub (strings.RuneCount $paragraph) (add (strings.RuneCount $tag_begin) (strings.RuneCount $tag_end)) }}
+      {{ $c := substr $paragraph (strings.RuneCount $tag_begin) $len }}
+
+      <!-- Do nothing if $c contains other tag in $tags -->
+      {{ if and (not (findRE $tags_pattern $c 1)) (not (findRE "no-kerning" $tag_begin 1)) }}
+
+        <!-- 1: Wrap English words by span -->
+        {{ $c = printf ">%s<" $c }}
+        {{ $list := findRE ">[^<>]+<" $c | uniq }}
+        {{ range $old := $list }}
+          {{ $new := substr $old 1 (sub (strings.RuneCount $old) 2) }}
+          {{ $new = replaceRE $pattern_western $replacement_western $new }}
+          {{ $c = printf ">%s<" $new | replace $c $old }}
+        {{ end }}
+        {{ $c = substr $c 1 (sub (strings.RuneCount $c) 2) }}
+
+        <!-- 2: Adjust spacings between ？ and other letters -->
+        {{ $c = replaceRE (printf $pattern_removing_tags $dividing_punctuation_marks "[\\n]") "$1<span class=spacing-full></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $dividing_punctuation_marks $opening_brackets) "$1<span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $dividing_punctuation_marks $middle_dots) "$1<span class=spacing-quarter></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $dividing_punctuation_marks $western) "$1<span class=spacing-quarter></span>$2" $c }}
+
+        <!-- 3: Remove line breaks between Japanese -->
+        {{ $c = replaceRE (printf $pattern_remove_linebreaks $japanese_all ".") "$1$2" $c }}
+        {{ $c = replaceRE (printf $pattern_remove_linebreaks "." $japanese_all) "$1$2" $c }}
+
+        <!-- 4: Adjust spacings between two letters -->
+        {{ $c = replaceRE $opening_brackets "<span style=\"margin-left:-.5em\">$0</span>" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $opening_brackets $middle_dots) "$1<span class=spacing-quarter></span>$2" $c }}
+
+        {{ $c = replaceRE $closing_brackets "<span style=\"letter-spacing:-.5em\">$0</span>" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $closing_brackets $opening_brackets) "$1<span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $closing_brackets $hyphens) "<span class=delete-right-half-by-margin>$1</span><span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $closing_brackets $dividing_punctuation_marks) "<span class=delete-right-half-by-margin>$1</span><span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $closing_brackets $middle_dots) "$1<span class=spacing-quarter></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $closing_brackets $japanese) "<span class=delete-right-half-by-margin>$1</span><span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $closing_brackets $western) "<span class=delete-right-half-by-margin>$1</span><span class=spacing-half></span>$2" $c }}
+
+        {{ $c = replaceRE (printf $pattern_removing_tags $hyphens $opening_brackets) "$1<span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $hyphens $middle_dots) "$1<span class=spacing-quarter></span>$2" $c }}
+
+        {{ $c = replaceRE $middle_dots "<span style=\"letter-spacing:-.25em; margin-left:-0.25em\">$0</span>" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $middle_dots $opening_brackets) "$1<span class=spacing-quarter></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $middle_dots $closing_brackets) "<span class=delete-right-quarter-by-margin>$1</span><span class=spacing-quarter></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $middle_dots $hyphens) "<span class=delete-right-quarter-by-margin>$1</span><span class=spacing-quarter></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $middle_dots $dividing_punctuation_marks) "<span class=delete-right-quarter-by-margin>$1</span><span class=spacing-quarter></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $middle_dots $full_stops) "<span class=delete-right-quarter-by-margin>$1</span><span class=spacing-quarter></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $middle_dots $commas) "<span class=delete-right-quarter-by-margin>$1</span><span class=spacing-quarter></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $middle_dots $japanese) "<span class=delete-right-quarter-by-margin>$1</span><span class=spacing-quarter></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $middle_dots $western) "<span class=delete-right-quarter-by-margin>$1</span><span class=spacing-quarter></span>$2" $c }}
+
+        {{ $c = replaceRE (printf "(%s)(.)" $full_stops) "<span style=\"letter-spacing:-.5em\">$1</span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $full_stops $opening_brackets) "<span style=\"margin-right:.5em\">$1</span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $full_stops $hyphens) "<span style=\"letter-spacing:0\">$1</span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $full_stops $dividing_punctuation_marks) "<span style=\"letter-spacing:0\">$1</span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $full_stops $japanese) "<span style=\"letter-spacing:0\">$1</span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $full_stops $western) "<span style=\"letter-spacing:0\">$1</span>$2" $c }}
+
+        {{ $c = replaceRE $commas "<span style=\"letter-spacing:-.5em\">$0</span>" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $commas $opening_brackets) "$1<span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $commas $hyphens) "<span class=delete-right-half-by-margin>$1</span><span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $commas $dividing_punctuation_marks) "<span class=delete-right-half-by-margin>$1</span><span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $commas $japanese) "<span class=delete-right-half-by-margin>$1</span><span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $commas $western) "<span class=delete-right-half-by-margin>$1</span><span class=spacing-half></span>$2" $c }}
+
+        {{ $c = replaceRE (printf $pattern_removing_tags $japanese $opening_brackets) "$1<span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $japanese $middle_dots) "$1<span class=spacing-quarter></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $japanese $western) "$1<span class=spacing-quarter></span>$2" $c }}
+
+        {{ $c = replaceRE (printf $pattern_removing_tags $western $opening_brackets) "$1<span class=spacing-half></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $western $middle_dots) "$1<span class=spacing-quarter></span>$2" $c }}
+        {{ $c = replaceRE (printf $pattern_removing_tags $western $japanese) "$1<span class=spacing-quarter></span>$2" $c }}
+
+        <!-- Apply to $text -->
+        {{ $new_paragraph := printf "%s%s%s" $tag_begin $c $tag_end }}
+        {{ $text = replace $text $paragraph $new_paragraph }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ safeHTML $text }}

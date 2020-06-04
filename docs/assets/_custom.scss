@@ -1,9 +1,6 @@
 // Fonts
 body {
-  font-family: Roboto, YakuHanJP_Noto, 'Noto Sans JP', sans-serif;
-  text-align: justify;
-  text-justify: inter-ideograph;
-  word-break: break-all;
+  font-family: Roboto, 'Noto Sans JP', sans-serif;
 }
 
 #algorithm-library, .book-brand {
@@ -11,10 +8,84 @@ body {
   font-variant-caps: small-caps;
 }
 
+// Text hyphenation and justification
+li,
+p {
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  overflow-wrap: break-word;
+  text-align: justify;
+  text-justify: inter-ideograph;
+  word-break: break-word;
+}
+
+// for safari
+_::-webkit-full-page-media,
+_:future,
+:root p,
+:root li {
+  text-align: left;
+}
+
+.en-us {
+  cursor: text;
+
+  a & {
+    cursor: pointer;
+  }
+}
+
+// Kerning
+$white-space-width: 4.3em / 19;
+
+.spacing::before {
+  content: "\0020";
+}
+
+.spacing-full {
+  @extend .spacing;
+  &::before {
+    letter-spacing: 1em - $white-space-width;
+  }
+}
+
+.spacing-half {
+  @extend .spacing;
+  &::before {
+    letter-spacing: 0.5em - $white-space-width;
+  }
+}
+
+.spacing-quarter {
+  @extend .spacing;
+  &::before {
+    letter-spacing: 0.25em - $white-space-width;
+  }
+
+  // disable in code block
+  code & {
+    &::before {
+      content: "";
+    }
+  }
+}
+
+.delete-right-half-by-margin {
+  letter-spacing: 0;
+  margin-right: -0.5em;
+}
+
+.delete-right-quarter-by-margin {
+  letter-spacing: 0;
+  margin-right: -0.25em;
+}
+
 // Hyperlinks
 a {
   transition: 0.3s;
-  
+
   &:hover {
     opacity: 0.5;
     text-decoration: underline;
@@ -29,17 +100,17 @@ a {
 ol.ref {
   counter-reset: list;
   list-style: none;
-  
+
   li {
     position: relative;
-    
+
     &::before {
       counter-increment: list;
       content: '[' counter(list) '] ';
       left: -1.4em;
       position: absolute;
     }
-    
+
     &:target {
       animation: fade-highlight 3s;
     }
@@ -67,7 +138,7 @@ a.cite {
   display: table;
   margin: auto;
   font-size: 0.9375rem;
-  
+
   tr {
     th, td {
       max-width: 120%;
@@ -105,7 +176,7 @@ figcaption.code-caption {
   letter-spacing: normal;
   line-height: 1em;
   margin: 0.4em 0.2em;
-  
+
   .fa-github {
     padding-right: 0.3em;
   }
@@ -124,7 +195,7 @@ figcaption.code-caption {
   font-size: 90%;
   outline: 0;
   padding: 0.1em 0.5em;
-  
+
   &:active {
     background-color: #b3d9ff;
   }
@@ -151,7 +222,7 @@ figcaption.code-caption {
   top: -2.65em;
   transform: translate(-50%, 0);
   word-break: normal;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -186,17 +257,17 @@ ol.highlight {
   margin: 0;
   padding: 0;
   width: 100%;
-  
+
   li {
     color: $gray-500;
     counter-increment: lineno;
     display: table-row;
-    
+
     &:hover {
       background-color: $color-highlight;
       color: $body-font-color;
     }
-    
+
     &::before {
       content: counter(lineno);
       display: table-cell;
@@ -204,7 +275,7 @@ ol.highlight {
       text-align: right;
       width: 1px;
     }
-    
+
     pre {
       background-color: transparent;
       color: $body-font-color;
@@ -227,25 +298,25 @@ ol.highlight {
     margin-left: -$menu-width;
     font-size: $font-size-base;
   }
-  
+
   .book-header {
     display: flex;
   }
-  
+
   #menu-control:checked + main {
     .book-menu nav, .book-page {
       transform: translateX($menu-width);
     }
-    
+
     .book-header label {
       transform: rotate(90deg);
     }
-    
+
     .markdown {
       opacity: 0.25;
     }
   }
-  
+
   // Make the left padding of code 0
   figure.code {
     padding: 0;

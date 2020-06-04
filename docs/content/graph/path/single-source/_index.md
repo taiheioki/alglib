@@ -1,6 +1,5 @@
 ---
 title: 単一始点最短路
-type: docs
 bookCollapseSection: true
 weight: 1
 ---
