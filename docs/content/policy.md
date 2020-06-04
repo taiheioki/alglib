@@ -1,6 +1,7 @@
 ---
 title: プライバシーポリシー
 type: docs
+bookHidden: true
 ---
 
 # プライバシーポリシー

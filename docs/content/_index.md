@@ -1,6 +1,5 @@
 ---
 title: トップページ
-type: docs
 ---
 
 # Algorithm Library

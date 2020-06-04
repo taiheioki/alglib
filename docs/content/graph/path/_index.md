@@ -1,6 +1,5 @@
 ---
 title: 路
-type: docs
 weight: 1
 ---
 

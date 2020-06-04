@@ -1,6 +1,7 @@
 ---
 title: 実装方針・コーディング規約
 type: docs
+bookHidden: true
 ---
 
 # 実装方針・コーディング規約

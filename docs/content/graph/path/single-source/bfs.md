@@ -1,6 +1,5 @@
 ---
 title: 幅優先探索
-type: docs
 weight: 1
 ---
 
