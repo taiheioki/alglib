@@ -5,7 +5,7 @@
 
 namespace alg
 {
-// BEGIN CUT algebra/linalg
+// BEGIN DISPLAY linalg
 template<typename R>
 class Vector : public std::vector<R>
 {
@@ -16,9 +16,9 @@ template<typename R>
 class Matrix
 {
 public
-    a int rows();
+    int rows();
 };
-// END CUT
+// END DISPLAY linalg
 
 }  // namespace alg
 

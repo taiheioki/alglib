@@ -9,18 +9,19 @@
 
 namespace alg
 {
+// BEGIN DISPLAY graph/bfs
 class BFS
 {
 protected:
-    std::vector<int> prev;  // prev[v] := the parent of v in a BFS tree
-
-public:
     enum
     {
         Unvisited = -1,
         Source    = -2
     };
 
+    std::vector<int> prev;  // prev[v] := the parent of v in the BFS tree
+
+public:
     BFS(const Graph& G, const int s) : prev(G.size(), Unvisited)
     {
         std::queue<int> Q;
@@ -31,9 +32,9 @@ public:
             const int v = Q.front();
             Q.pop();
             for(const Edge& e : G[v]) {
-                if(prev[e.dst] == Unvisited) {
-                    Q.push(e.dst);
-                    prev[e.dst] = v;
+                if(prev[e.head] == Unvisited) {
+                    Q.push(e.head);
+                    prev[e.head] = v;
                 }
             }
         }
@@ -53,7 +54,8 @@ public:
         return P;
     }
 };
+// END DISPLAY graph/bfs
 
-}  // end of namespace alg
+}  // namespace alg
 
 #endif

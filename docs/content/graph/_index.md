@@ -19,4 +19,4 @@ weight: 2
 グラフの
 
 ## ソースコード
-{{< code file="graph/graph.hpp" start=9 end=15 >}}
+{{< code file="graph/graph.hpp" id="graph" >}}

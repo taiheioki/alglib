@@ -1,6 +1,5 @@
 ---
 title: 素朴行列乗算
-type: docs
 weight: 1
 ---
 
@@ -11,7 +10,7 @@ weight: 1
 
 ## 計算量
 
-$\\mathrm{O}(nmp)$ 回の $R$ 上の演算
+$\\order(nmp)$ 回の $R$ 上の演算
 
 ## ソースコード
 ```cpp

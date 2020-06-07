@@ -5,15 +5,15 @@
 
 namespace alg
 {
-
+// BEGIN DISPLAY graph
 struct Edge
 {
-    int src; // tail
-    int dst; // head
+    int tail;
+    int head;
 };
 
 using Graph = std::vector<std::vector<Edge>>;
-
-} // end of namespace alg
+// END DISPLAY graph
+}  // end of namespace alg
 
 #endif

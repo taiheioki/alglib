@@ -15,7 +15,7 @@ $\\mathrm{O}(\|V\|+\|E\|)$
 ## ソースコード
 `graph/graph.hpp` に依存．
 
-{{< code file="graph/bfs.hpp" start=13 end=55 >}}
+{{< code file="graph/bfs.hpp" id="graph/bfs" >}}
 
 ## 検証
 

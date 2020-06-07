@@ -1,6 +1,5 @@
 ---
 title: 行列積
-type: docs
 bookCollapseSection: true
 weight: 1
 ---
