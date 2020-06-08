@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# online-judge-tools
+.verify-helper
+
 # Editor setting files
 .vscode
 

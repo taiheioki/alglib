@@ -18,5 +18,6 @@ $\\mathrm{O}(\|V\|+\|E\|)$
 {{< code file="graph/bfs.hpp" id="graph/bfs" >}}
 
 ## 検証
+[AOJ ALDS1_11_C: Breadth First Search](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_11_C)
 
 ## 参考文献
