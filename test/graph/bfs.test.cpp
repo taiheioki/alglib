@@ -21,12 +21,13 @@ int main()
             int v;
             cin >> v;
             --v;
-            G[u].emplace_back(u, v);
+            G[u].push_back({u, v});
         }
     }
 
-    BFS bfs(G, 0);
+    const BFS bfs(G, 0);
+    const auto d = bfs.distance_list();
     for(int i = 0; i < n; ++i) {
-        cout << i + 1 << ' ' << int(bfs.path_to(i).size()) - 1 << endl;
+        cout << i + 1 << ' ' << (d[i] != BFS::Unreachable ? d[i] : -1) << endl;
     }
 }

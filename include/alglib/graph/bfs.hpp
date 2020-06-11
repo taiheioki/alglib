@@ -1,11 +1,12 @@
 #ifndef ALGLIB_GRAPH_BFS_HPP_
 #define ALGLIB_GRAPH_BFS_HPP_
 
-#include <algorithm>
+#include <climits>
 #include <queue>
 #include <vector>
 
-#include "graph.hpp"
+#include "alglib/graph/graph.hpp"
+#include "alglib/graph/tree.hpp"
 
 namespace alg
 {
@@ -13,45 +14,46 @@ namespace alg
 class BFS
 {
 protected:
-    enum
-    {
-        Unvisited = -1,
-        Source    = -2
-    };
-
-    std::vector<int> prev;  // prev[v] := the parent of v in the BFS tree
+    Tree T;                 // A shortest path tree rooted at s
+    std::vector<int> dist;  // dist[v] := the distance from s to v or "Unreachable"
 
 public:
-    BFS(const Graph& G, const int s) : prev(G.size(), Unvisited)
+    enum
+    {
+        Unreachable = INT_MAX
+    };
+
+    // Ctor -- the main part of the algorithm
+    BFS(const Graph& G, const int s) : T(G.size(), s), dist(G.size(), Unreachable)
     {
         std::queue<int> Q;
         Q.push(s);
-        prev[s] = Source;
+        dist[s] = 0;
 
         while(!Q.empty()) {
             const int v = Q.front();
             Q.pop();
             for(const Edge& e : G[v]) {
-                if(prev[e.head] == Unvisited) {
+                if(T[e.head].parent == TreeNode::Invalid) {
                     Q.push(e.head);
-                    prev[e.head] = v;
+                    T[e.head].parent = v;
+                    T[v].children.push_back(e.head);
+                    dist[e.head] = dist[v] + 1;
                 }
             }
         }
     }
 
-    // Build a shortest path from s to t.
-    // If G has no s--t path, return an empty array.
-    std::vector<int> path_to(const int t)
+    // Return a shortest path tree rooted at s.
+    Tree shortest_path_tree() const
     {
-        std::vector<int> P;
-        if(prev[t] != Unvisited) {
-            for(int v = t; v != Source; v = prev[v]) {
-                P.push_back(v);
-            }
-            std::reverse(P.begin(), P.end());
-        }
-        return P;
+        return T;
+    }
+
+    // Return the array of shortest path lengths from s to each vertex.
+    std::vector<int> distance_list() const
+    {
+        return dist;
     }
 };
 // END DISPLAY graph/bfs

@@ -7,8 +7,17 @@ document.addEventListener("DOMContentLoaded", () => {
             { left: "$", right: "$", display: false }
         ],
         macros: {
-            "\\order": "\\mathrm{O}",
-            "\\sgn": "\\operatorname{sgn}"
+          "\\prn": "{\\left(#1\\right)}",
+          "\\set": "{\\left\\{#1\\right\\}}",
+          "\\defeq": "\\coloneqq",
+          "\\funcdoms": "{#1}\\vcentcolon{#2}\\to{#3}",
+          "\\join": "\\mathbin{\\vee}",
+          "\\meet": "\\mathbin{\\wedge}",
+          "\\order": "\\mathrm{O}",
+          "\\sgn": "\\operatorname{sgn}",
+          "\\setR": "\\mathbb{R}",
+          "\\iff": "\\Longleftrightarrow",
+          "\\defiff": "\\overset{\\text{def}}{\\Longleftrightarrow}",
         }
     });
 

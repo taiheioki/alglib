@@ -1,1 +1,13 @@
-<a href="{{ .Get 1 }}" class="cite">[{{ .Get 0 }}]</a>
+{{ $params := . -}}
+{{- $n := 0 -}}
+{{- range $i := seq 10 -}}
+  {{- if $params.Get (mul $i 2) -}}
+    {{- $n = $i -}}
+  {{- end -}}
+{{- end -}}
+[
+{{- range $i := seq 0 $n -}}
+  <a href="#{{ $params.Get (add (mul $i 2) 1) }}" class="cite">{{ $params.Get (mul $i 2) }}</a>
+  {{- if lt $i $n }},&nbsp;{{ end -}}
+{{- end -}}
+]
