@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "\\funcdoms": "{#1}\\vcentcolon{#2}\\to{#3}",
           "\\join": "\\mathbin{\\vee}",
           "\\meet": "\\mathbin{\\wedge}",
-          "\\order": "\\mathrm{O}",
+          "\\Order": "\\mathrm{O}",
           "\\sgn": "\\operatorname{sgn}",
           "\\setR": "\\mathbb{R}",
           "\\iff": "\\Longleftrightarrow",

@@ -1,5 +1,4 @@
-#define PROBLEM \
-    "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_11_C"
+#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_11_C"
 
 #include <iostream>
 #include "alglib/graph/bfs.hpp"

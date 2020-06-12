@@ -7,10 +7,10 @@ weight: 1
 ## 概要
 各辺が単位長の無向または有向グラフ $G$ における[単一始点最短路](..)問題を解く．始点 $s$ から到達可能な頂点を近い順にキューに追加していくシンプルなアルゴリズム．
 
-英語では Breadth First Search (BFS) といい，よく BFS と略される．Schrijver ABC {{< cite 3 "Schrijver2003">}} によると初出は Berge {{< cite 1 "Berge1958b" >}}, Moore {{< cite 2 "Moore1959" >}} らしい．
+英語では Breadth First Search (BFS) といい，よく BFS と略される．Schrijver ABC&nbsp;{{< cite 3 "Schrijver2003">}} によると初出は Berge&nbsp;{{< cite 1 "Berge1958b" >}}, Moore&nbsp;{{< cite 2 "Moore1959" >}} らしい．
 
 ## 計算量
-$\\mathrm{O}(\|V\|+\|E\|)$
+$\\order(\|V\|+\|E\|)$
 
 ## ソースコード
 `graph/graph.hpp`，`graph/tree.hpp` に依存．

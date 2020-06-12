@@ -20,6 +20,10 @@ weight: 2
 * [路](path) (path)
   * [単一始点最短路](path/single-source) (single source shortest path)
   * 全点対間最短路 (all-pairs shortest paths)
+* [連結性](connectivity) (connectivity)
+  * [トポロジカルソート](topological-sort) (topological sort)
+  * [強連結成分分解](scc) (strongly connected component decomposition)
+  * [Euler 向き付け](euler-orientation) (Euler orientation)
 
 ## データ構造
 グラフの表現方法は

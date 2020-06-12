@@ -21,7 +21,7 @@
   {{ $pattern_removing_tags := "(%s)((?:(?:<[^<>]*>)|[ ])*(%s))" }}
 
   <!-- Array of tags whose contents are processed -->
-  {{ $tags := slice "p" "li" "td" "h1" "h2" "h3" "h4" "h5" "h6" }}
+  {{ $tags := slice "p" "li" "td" "h1" "h2" "h3" "h4" "h5" "h6" "blockquote" }}
   {{ $tags_pattern := delimit $tags "|" | printf "<(%s)" }}
 
   <!-- For every tag -->
