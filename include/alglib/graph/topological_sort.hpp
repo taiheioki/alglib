@@ -14,7 +14,7 @@ class TopologicalSortKahn
 {
 public:
     bool is_dag;             // Whether the input is a DAG or not.
-    std::vector<int> order;  // Represent a topological order if is_dag = true.
+    std::vector<int> order;  // If is_dag = true, order[0], order[1], ... is a topological order.
 
     // Test if G is a DAG, and if so, sort vertices of G topologically.
     TopologicalSortKahn(const Graph& G)
@@ -22,8 +22,8 @@ public:
         const int n = G.size();
 
         std::vector<int> indeg(n, 0);
-        for(int i = 0; i < n; ++i) {
-            for(const Edge& e : G[i]) {
+        for(const auto& v : G) {
+            for(const Edge& e : v) {
                 indeg[e.head]++;
             }
         }
@@ -57,13 +57,10 @@ public:
 class TopologicalSortTarjan
 {
 public:
-    enum
-    {
-        All = -1
-    };
+    bool is_dag = true;  // Whether there exists a directed cycle reachable from r.
 
-    bool is_dag = true;      // Whether there exists a cycle reachable from r.
-    std::vector<int> order;  // A pre-topological order or vertices reachable from r.
+    // order[0], order[1], ... is a pre-topological order of vertices reachable from r.
+    std::vector<int> order;
 
 protected:
     enum class Flag
@@ -74,34 +71,28 @@ protected:
     };
     std::vector<Flag> flags;
 
-    // Recursively traverse vertices that are reachable from r.
-    void dfs(const Graph& G, const int r)
+    // Recursively traverse vertices that are reachable from v.
+    void dfs(const Graph& G, const int v)
     {
-        flags[r] = Flag::Visiting;
+        if(flags[v] != Flag::Unvisited)
+            return;
+        flags[v] = Flag::Visiting;
 
-        for(const Edge& e : G[r]) {
-            const int u = e.head;
-            is_dag &= flags[u] != Flag::Visiting;
-            if(flags[u] != Flag::Visited)
-                dfs(G, u);
+        for(const Edge& e : G[v]) {
+            is_dag &= flags[e.head] != Flag::Visiting;
+            dfs(G, e.head);
         }
 
-        flags[r] = Flag::Visited;
-        order.push_back(r);
+        flags[v] = Flag::Visited;
+        order.push_back(v);
     }
 
 public:
-    // Sort pre-topologically vertices of G that are reachable from r.
-    // If r is "All", all vertices are targets.
-    TopologicalSortTarjan(const Graph& G, const int r = All) : flags(G.size(), Flag::Unvisited)
+    // Sort pre-topologically vertices of G.
+    TopologicalSortTarjan(const Graph& G) : flags(G.size(), Flag::Unvisited)
     {
-        if(r == All) {
-            for(int i = 0; i < int(G.size()); ++i) {
-                dfs(G, i);
-            }
-        }
-        else {
-            dfs(G, r);
+        for(int i = 0; i < int(G.size()); ++i) {
+            dfs(G, i);
         }
         std::reverse(order.begin(), order.end());
     }

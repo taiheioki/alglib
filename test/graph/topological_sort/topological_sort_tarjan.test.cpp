@@ -1,7 +1,9 @@
-#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_4_B"
+#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_4_A"
 
 #include <iostream>
+
 #include "alglib/graph/topological_sort.hpp"
+#include "verify.hpp"
 
 using namespace std;
 using namespace alg;
@@ -19,7 +21,7 @@ int main()
     }
 
     const TopologicalSortTarjan top(G);
-    for(const int v : top.order) {
-        cout << v << endl;
-    }
+    verify(G, top);
+
+    cout << !top.is_dag << endl;
 }

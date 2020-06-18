@@ -20,7 +20,7 @@ int main()
             int v;
             cin >> v;
             --v;
-            G[u].push_back({u, v});
+            G.add_edge(u, v);
         }
     }
 
