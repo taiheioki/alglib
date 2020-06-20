@@ -6,11 +6,11 @@
 #include "alglib/graph/graph.hpp"
 
 template<typename TopologicalSort>
-void verify(const alg::Graph& G, const TopologicalSort& top)
+void verify(const alg::DirectedGraph& G, const TopologicalSort& top)
 {
     if(top.is_dag) {
         // Check of topological ordering
-        const int n = G.size();
+        const int n = G.num_vertices();
         assert(int(top.order.size()) == n);
 
         std::vector<int> inv(n);
@@ -19,8 +19,8 @@ void verify(const alg::Graph& G, const TopologicalSort& top)
             inv[top.order[i]] = i;
         }
         for(const int v : top.order) {
-            for(const alg::Edge& e : G[v]) {
-                assert(inv[e.tail] < inv[e.head]);
+            for(const auto [j, u] : G.outedges(v)) {
+                assert(inv[v] < inv[u]);
             }
         }
     }

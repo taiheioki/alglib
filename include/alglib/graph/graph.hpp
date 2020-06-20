@@ -1,9 +1,6 @@
 #ifndef ALGLIB_GRAPH_HPP_
 #define ALGLIB_GRAPH_HPP_
 
-#include <cassert>
-#include <cstddef>
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -11,171 +8,79 @@ namespace alg
 {
 // BEGIN DISPLAY graph
 
-// Classes for bases objects: vertices and edges
-struct Vertex
+struct Edge
 {
-    const int id;
-    constexpr Vertex(const int id) noexcept : id(id) {}
+    int tail, head;  // tail --> head
+
+    Edge() = default;
+    constexpr Edge(const int tail, const int head) noexcept : tail(tail), head(head) {}
 };
 
-template<class VertexType = Vertex>
-class Edge
+class DirectedGraph
 {
-public:
-    using Vertex = VertexType;
-
 protected:
-    Vertex &m_tail, &m_head;  // tail -> head
+    // m_inedges[v] := a list of {edge id, adjacent vertex} entering to v
+    std::vector<std::vector<std::pair<int, int>>> m_inedges, m_outedges;
+    std::vector<Edge> E;
 
 public:
-    constexpr Edge(Vertex& tail, Vertex& head) noexcept : m_tail(tail), m_head(head) {}
+    // Initialize an empty digraph.
+    DirectedGraph() = default;
 
-    // Accessors
-    constexpr Vertex& tail() noexcept { return m_tail; }
-    constexpr const Vertex& tail() const noexcept { return m_tail; }
-    constexpr Vertex& head() noexcept { return m_head; }
-    constexpr const Vertex& head() const noexcept { return m_head; }
+    // Initialize an edgeless digraph with n vetices.
+    DirectedGraph(const int n) : m_inedges(n), m_outedges(n) {}
 
-    // For structured bindings
-    /*
-    template<std::size_t I>
-    constexpr Vertex& get() noexcept
+    // Return the number of vertices.
+    int num_vertices() const noexcept { return m_inedges.size(); }
+
+    // Return the array of {edge id, tail} whose heads are v.
+    auto& inedges(const int v) const { return m_inedges[v]; }
+
+    // Return the indegree of v.
+    int indegree(const int v) const { return inedges(v).size(); }
+
+    // Return the array of {edge id, head} whose tails are v.
+    auto& outedges(const int v) const { return m_outedges[v]; }
+
+    // Return the outedegree of v.
+    int outdegree(const int v) const { return outedges(v).size(); }
+
+    // Return the j-th edge.
+    Edge edge(const int j) const { return E[j]; }
+
+    // Return the array of edges.
+    auto& edges() const noexcept { return E; }
+
+    // Return the array of edges.
+    int num_edges() const noexcept { return E.size(); }
+
+    // Add a new vertex.
+    void add_vertex()
     {
-        return I == 0 ? tail() : head();
+        m_inedges.emplace_back();
+        m_outedges.emplace_back();
     }
-    */
 
-    template<std::size_t I>
-    constexpr const Vertex& get() const noexcept
+    // Add a new edge.
+    void add_edge(const int tail, const int head)
     {
-        return I == 0 ? tail() : head();
+        assert(0 <= tail && tail < num_vertices());
+        assert(0 <= head && head < num_vertices());
+        const int j = num_edges();
+        E.emplace_back(tail, head);
+        m_inedges[head].emplace_back(j, tail);
+        m_outedges[tail].emplace_back(j, head);
     }
+    void add_edge(const Edge e) { add_edge(e.tail, e.head); }
 };
-
-}  // namespace alg
-
-// For structured bindings of alg::Edge<VertexType>
-namespace std
-{
-template<class VertexType>
-struct tuple_size<alg::Edge<VertexType>> : integral_constant<size_t, 2>
-{};
-
-template<size_t I, class VertexType>
-struct tuple_element<I, alg::Edge<VertexType>>
-{
-    using type = VertexType;
-};
-
-}  // namespace std
-
-namespace alg
-{
-// For range-based for
-template<class Iterator>
-class Range
-{
-private:
-    const Iterator m_begin, m_end;
-    const int m_size;
-
-public:
-    template<typename Container>
-    constexpr Range(Container& container)
-      : Range(container.begin(), container.end(), container.size())
-    {}
-    constexpr Range(Iterator&& begin, Iterator&& end, const int size) noexcept
-      : m_begin(begin), m_end(end), m_size(size)
-    {}
-
-    constexpr Iterator begin() const noexcept { return m_begin; }
-    constexpr Iterator end() const noexcept { return m_end; }
-    constexpr int size() const noexcept { return m_size; }
-};
-
-template<typename Container>
-Range(Container& container) -> Range<decltype(container.begin())>;  // Deduction guide
-
-// Main
-template<class VertexType = Vertex, class EdgeType = Edge<VertexType>>
-class Graph
-{
-public:
-    using Vertex = VertexType;
-    using Edge   = EdgeType;
-
-protected:
-    std::vector<Vertex> V;
-    std::vector<std::vector<Edge>> E;  // E[v] := edges from v
-
-public:
-    // Initialize an empty graph.
-    // Time complexity: O(1)
-    Graph() = default;
-
-    // Initialize an edgeless graph with n vetices.
-    // Time complexity: O(n)
-    Graph(const int n) : E(n)
-    {
-        V.reserve(n);  // Pre-allocate memory for performance
-        for(int i = 0; i < n; ++i) {
-            V.emplace_back(i);
-        }
-    }
-
-    // Access the id-th vertex.
-    // Time complexity: O(1)
-    Vertex& vertex(const int id) { return V[id]; }
-    const Vertex& vertex(const int id) const { return V[id]; }
-
-    // Return a range of vertices.
-    // Time complexity: O(1)
-    auto vertices() noexcept { return Range(V); }
-    auto vertices() const noexcept { return Range(V); }
-
-    // Access the outgoing edges from the id-th vertex.
-    // Time complexity: O(1)
-    auto outedges(const int id) noexcept { return Range(E[id]); }
-    auto outedges(const int id) const noexcept { return Range(E[id]); }
-
-    // Add a new vertex by in-place construction.
-    // Time complexity: amortized O(1)
-    template<typename... Args>
-    void add_vertex(Args&&... args)
-    {
-        V.emplace_back(vertices().size(), std::forward<Args>(args)...);
-        E.emplace_back();
-    }
-
-    // Add a new vertex by in-place construction.
-    // Time complexity: amortized O(1)
-    template<typename... Args>
-    void add_edge(const int tail, const int head, Args&&... args)
-    {
-        assert(0 <= tail && tail < vertices().size());
-        assert(0 <= head && head < vertices().size());
-        E[tail].emplace_back(V[tail], V[head], std::forward<Args>(args)...);
-    }
-};
-
-// Return the reversed edge.
-// Time complexity: O(1)
-template<typename Edge>
-Edge reverse(const Edge& e)
-{
-    Edge erev = e;
-    std::swap(erev.tail, erev.head);
-    return erev;
-}
 
 // Return the reversed graph.
 // Time complexity: O(|V| + |E|)
-template<typename Vertex, typename Edge>
-Graph<Vertex, Edge> reverse(const Graph<Vertex, Edge>& G)
+DirectedGraph reverse(const DirectedGraph& G)
 {
-    Graph<Vertex, Edge> Grev(G.vertices().size());
-    for(const Edge& e : G.edges()) {
-        Grev.add_edge(e.reverse());
+    DirectedGraph Grev(G.num_vertices());
+    for(const Edge e : G.edges()) {
+        Grev.add_edge(e.head, e.tail);
     }
     return Grev;
 }

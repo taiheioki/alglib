@@ -10,7 +10,7 @@ int main()
 {
     int n;
     cin >> n;
-    Graph G(n);
+    DirectedGraph G(n);
 
     for(int i = 0; i < n; ++i) {
         int u, k;
@@ -25,8 +25,7 @@ int main()
     }
 
     const BFS bfs(G, 0);
-    const auto d = bfs.distance_list();
     for(int i = 0; i < n; ++i) {
-        cout << i + 1 << ' ' << (d[i] != BFS::Unreachable ? d[i] : -1) << endl;
+        cout << i + 1 << ' ' << (bfs.dist[i] != BFS::Unreachable ? bfs.dist[i] : -1) << endl;
     }
 }

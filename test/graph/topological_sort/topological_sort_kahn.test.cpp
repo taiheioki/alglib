@@ -12,12 +12,12 @@ int main()
 {
     int n, m;
     cin >> n >> m;
-    Graph G(n);
+    DirectedGraph G(n);
 
     for(int j = 0; j < m; ++j) {
         int s, t;
         cin >> s >> t;
-        G[s].push_back({s, t});
+        G.add_edge(s, t);
     }
 
     const TopologicalSortKahn top(G);

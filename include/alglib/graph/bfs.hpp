@@ -1,7 +1,7 @@
 #ifndef ALGLIB_GRAPH_BFS_HPP_
 #define ALGLIB_GRAPH_BFS_HPP_
 
-#include <climits>
+#include <limits>
 #include <queue>
 #include <vector>
 
@@ -13,20 +13,19 @@ namespace alg
 // BEGIN DISPLAY graph/bfs
 class BFS
 {
-protected:
-    Tree T;                 // A shortest path tree rooted at s
-    std::vector<int> dist;  // dist[v] := the distance from s to v or "Unreachable"
-
 public:
+    Tree shortest_path_tree;  // A shortest path tree rooted at s
+
+    // dist[v] := the distance from s to v or "Unreachable"
+    std::vector<int> dist;
     enum
     {
-        Unreachable = INT_MAX
+        Unreachable = std::numeric_limits<int>::max(),
     };
 
     // Ctor -- the main part of the algorithm
-    template<class Vertex, class Edge>
-    BFS(const Graph<Vertex, Edge>& G, const int s)
-      : T(G.vertices().size(), s), dist(G.vertices().size(), Unreachable)
+    BFS(const DirectedGraph& G, const int s)
+      : shortest_path_tree(G.num_vertices(), s), dist(G.num_vertices(), Unreachable)
     {
         std::queue<int> Q;
         Q.push(s);
@@ -35,23 +34,16 @@ public:
         while(!Q.empty()) {
             const int v = Q.front();
             Q.pop();
-            for(const Edge& e : G.outedges(v)) {
-                const int u = e.head.id;
-                if(T[u].parent == TreeNode::Invalid) {
+            for(const auto [j, u] : G.outedges(v)) {
+                if(shortest_path_tree[u].parent == TreeNode::Invalid) {
                     Q.push(u);
-                    T[u].parent = v;
-                    T[v].children.push_back(u);
+                    shortest_path_tree[u].parent = v;
+                    shortest_path_tree[v].children.push_back(u);
                     dist[u] = dist[v] + 1;
                 }
             }
         }
     }
-
-    // Return a shortest path tree rooted at s.
-    Tree shortest_path_tree() const { return T; }
-
-    // Return the array of shortest path lengths from s to each vertex.
-    std::vector<int> distance_list() const { return dist; }
 };
 // END DISPLAY graph/bfs
 

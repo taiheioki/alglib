@@ -17,21 +17,16 @@ public:
     std::vector<int> order;  // If is_dag = true, order[0], order[1], ... is a topological order.
 
     // Test if G is a DAG, and if so, sort vertices of G topologically.
-    TopologicalSortKahn(const Graph& G)
+    TopologicalSortKahn(const DirectedGraph& G)
     {
-        const int n = G.size();
-
-        std::vector<int> indeg(n, 0);
-        for(const auto& v : G) {
-            for(const Edge& e : v) {
-                indeg[e.head]++;
-            }
-        }
-
+        const int n = G.num_vertices();
+        std::vector<int> indeg(n);
         std::stack<int> S;  // Any other containers are OK
-        for(int i = 0; i < n; ++i) {
-            if(indeg[i] == 0) {
-                S.push(i);
+
+        for(int v = 0; v < n; ++v) {
+            indeg[v] = G.indegree(v);
+            if(indeg[v] == 0) {
+                S.push(v);
             }
         }
 
@@ -39,8 +34,7 @@ public:
             const int v = S.top();
             S.pop();
             order.push_back(v);
-            for(const Edge& e : G[v]) {
-                const int u = e.head;
+            for(const auto [j, u] : G.outedges(v)) {
                 indeg[u]--;
                 if(indeg[u] == 0) {
                     S.push(u);
@@ -57,10 +51,8 @@ public:
 class TopologicalSortTarjan
 {
 public:
-    bool is_dag = true;  // Whether there exists a directed cycle reachable from r.
-
-    // order[0], order[1], ... is a pre-topological order of vertices reachable from r.
-    std::vector<int> order;
+    bool is_dag = true;      // Whether there exists a directed cycle.
+    std::vector<int> order;  // order[0], order[1], ... is a pre-topological order of vertices.
 
 protected:
     enum class Flag
@@ -72,15 +64,15 @@ protected:
     std::vector<Flag> flags;
 
     // Recursively traverse vertices that are reachable from v.
-    void dfs(const Graph& G, const int v)
+    void dfs(const DirectedGraph& G, const int v)
     {
         if(flags[v] != Flag::Unvisited)
             return;
         flags[v] = Flag::Visiting;
 
-        for(const Edge& e : G[v]) {
-            is_dag &= flags[e.head] != Flag::Visiting;
-            dfs(G, e.head);
+        for(const auto [j, u] : G.outedges(v)) {
+            is_dag &= flags[u] != Flag::Visiting;
+            dfs(G, u);
         }
 
         flags[v] = Flag::Visited;
@@ -89,10 +81,10 @@ protected:
 
 public:
     // Sort pre-topologically vertices of G.
-    TopologicalSortTarjan(const Graph& G) : flags(G.size(), Flag::Unvisited)
+    TopologicalSortTarjan(const DirectedGraph& G) : flags(G.num_vertices(), Flag::Unvisited)
     {
-        for(int i = 0; i < int(G.size()); ++i) {
-            dfs(G, i);
+        for(int v = 0; v < G.num_vertices(); ++v) {
+            dfs(G, v);
         }
         std::reverse(order.begin(), order.end());
     }
