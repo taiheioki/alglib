@@ -1,6 +1,8 @@
 #ifndef ALGLIB_GRAPH_SCC_HPP_
 #define ALGLIB_GRAPH_SCC_HPP_
 
+#include <algorithm>
+#include <stack>
 #include <vector>
 
 #include "alglib/graph/graph.hpp"
@@ -8,48 +10,100 @@
 
 namespace alg
 {
+// BEGIN DISPLAY tarjan1972
+class SccTarjan
+{
+public:
+    std::vector<std::vector<int>> components;  // components[i] := original vertices of scc_graph[i]
+
+protected:
+    const DirectedGraph& G;
+    std::vector<int> index;
+    int num_visited;
+    std::stack<int> S;
+
+    enum
+    {
+        Unvisited = -1,
+        Done      = -2,
+    };
+
+    // Find strongly connected components in the DFS tree rooted at v.
+    // The return value is the "lowlink" number of v.
+    int strong_connect(const int v)
+    {
+        S.push(v);
+        index[v]    = num_visited;
+        int lowlink = num_visited;
+        ++num_visited;
+
+        for(const auto [j, u] : G.outedges(v)) {
+            if(index[u] == Unvisited)
+                lowlink = std::min(lowlink, strong_connect(u));
+            else if(index[u] != Done)  // u in S
+                lowlink = std::min(lowlink, index[u]);
+        }
+
+        if(index[v] == lowlink) {
+            components.emplace_back();
+            for(;;) {
+                const int u = S.top();
+                S.pop();
+                index[u] = Done;
+                components.back().push_back(u);
+                if(u == v)
+                    break;
+            }
+        }
+
+        return lowlink;
+    }
+
+public:
+    SccTarjan(const DirectedGraph& G) : G(G), index(G.num_vertices(), Unvisited), num_visited(0)
+    {
+        for(int v = 0; v < G.num_vertices(); ++v) {
+            if(index[v] == Unvisited) {
+                strong_connect(v);
+            }
+        }
+        std::reverse(components.begin(), components.end());
+    }
+};
+// END DISPLAY tarjan1972
+
 // BEGIN DISPLAY kosaraju1978
 class SccKosaraju
 {
 public:
-    DirectedGraph scc_graph;                   // A graph which is obtained by contracting each scc
     std::vector<std::vector<int>> components;  // components[i] := original vertices of scc_graph[i]
-    std::vector<int> component_ids;            // components[component_ids[v]] contains v
 
 protected:
-    enum
-    {
-        Unvisited = -1,
-    };
+    const DirectedGraph& G;
+    std::vector<bool> visited;
 
     // Visit "Unvisited" vertices of G reachable to v.
-    void reachable_to(const DirectedGraph& G, const int v)
+    void reachable_to(const int v)
     {
-        if(component_ids[v] != Unvisited)
-            return;
-
-        const int scc_id = scc_graph.num_vertices() - 1;
-        component_ids[v] = scc_id;
-        components[scc_id].push_back(v);
+        visited[v] = true;
+        components.back().push_back(v);
 
         for(const auto [j, u] : G.inedges(v)) {
-            reachable_to(G, u);
-            scc_graph.add_edge(component_ids[u], scc_id);
+            if(!visited[u]) {
+                reachable_to(u);
+            }
         }
     }
 
 public:
-    SccKosaraju(const DirectedGraph& G) : component_ids(G.num_vertices(), Unvisited)
+    SccKosaraju(const DirectedGraph& G) : G(G), visited(G.num_vertices())
     {
         for(const int v : TopologicalSortTarjan(G).order) {
-            if(component_ids[v] == Unvisited) {
-                scc_graph.add_vertex();
+            if(!visited[v]) {
                 components.emplace_back();
-                reachable_to(G, v);
+                reachable_to(v);
             }
         }
-
-        scc_graph = simplify(scc_graph);
     }
 };
 // END DISPLAY kosaraju1978

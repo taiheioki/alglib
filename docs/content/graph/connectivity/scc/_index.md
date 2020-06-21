@@ -15,11 +15,12 @@ $$
 と定めると，強連結性の定義より，$(\\mathcal{C}, F)$ は DAG となる．
 
 ## 問題設定
-与えられた有向グラフ $G = (V, E)$ の強連結成分 $C\_1, \\ldots, C\_k$ をすべて求め，それらを頂点とする DAG を出力したい．
-特に $C\_1, \\ldots, C\_k$ はこの DAG における{{< link "../topological-sort" "位相的" >}}順序としたい．
+与えられた有向グラフ $G = (V, E)$ の強連結成分 $C\_1, \\ldots, C\_k$ をすべて求めたい．
+特に $C\_1, \\ldots, C\_k$ は上で定義した DAG における{{< link "../topological-sort" "位相的" >}}順序としたい．
 
 ## アルゴリズム
 
 | アルゴリズム | 計算量 | 備考 |
 | ---------- | ----- | --- |
-| {{< link "kosaraju1978" >}} | $\\Order(\|V\|+\|E\|)$ | {{< link "../topological-sort/tarjan1976" >}} を利用 |
+| {{< link "tarjan1972" >}} | $\\Order(\|V\|+\|E\|)$ | DFS を 1 回行う |
+| {{< link "kosaraju1978" >}} | $\\Order(\|V\|+\|E\|)$ | DFS を 2 回行う |
