@@ -16,5 +16,5 @@ $G$ が無向グラフのとき，到達可能性は $V$ 上の同値関係を�
 $G$ の各辺が辺長 $\\funcdoms{\\ell}{E}{\\setR}$ を持つ場合，$P$ の長さ $\\ell(P)$ は $P$ が含む辺の長さの和として定義される．
 
 ## 関連問題
-* [単一始点最短路](single-source) (single source shortest path)
+* {{< link "single-source" >}}
 * 全点対間最短路 (all-pairs shortest paths)

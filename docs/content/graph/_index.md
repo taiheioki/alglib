@@ -17,13 +17,13 @@ weight: 2
 頂点や辺はそれぞれ節点 (node)，枝 (branch) ともよばれる．グラフが有向の場合，辺は特に有向辺 (directed edge) やアーク (arc) ともいう．
 
 ## 関連問題
-* [路](path) (path)
+* {{< link "path" >}}
   * [単一始点最短路](path/single-source) (single source shortest path)
   * 全点対間最短路 (all-pairs shortest paths)
 * [連結性](connectivity) (connectivity)
-  * [トポロジカルソート](topological-sort) (topological sort)
-  * [強連結成分分解](scc) (strongly connected component decomposition)
-  * [Euler 向き付け](euler-orientation) (Euler orientation)
+  * [トポロジカルソート](connectivity/topological-sort) (topological sort)
+  * [強連結成分分解](connectivity/scc) (strongly connected component decomposition)
+  * [Euler 向き付け](connectivity/euler-orientation) (Euler orientation)
 
 ## データ構造
 グラフの表現方法は

@@ -26,8 +26,8 @@ pre-topological はどう和訳するんでしょう？
 
 | アルゴリズム | 計算量 | 備考 |
 | ---------- | ----- | --- |
-| [Kahn (1962)](kahn1962) | $\\Order(\|V\|+\|E\|)$ | DAG の判定 & 位相的順序の計算のみ |
-| [Tarjan (1976)](tarjan1976) | $\\Order(\|V\|+\|E\|)$ | pre-topological な順序も出力できる |
+| {{< link "kahn1962" >}} | $\\Order(\|V\|+\|E\|)$ | DAG の判定 & 位相的順序の計算のみ |
+| {{< link "tarjan1976" >}} | $\\Order(\|V\|+\|E\|)$ | pre-topological な順序も出力できる |
 
 ## 参考文献
 {{< references >}}

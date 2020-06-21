@@ -61,10 +61,9 @@ protected:
         Visiting,
         Visited,
     };
-    std::vector<Flag> flags;
 
     // Recursively traverse vertices that are reachable from v.
-    void dfs(const DirectedGraph& G, const int v)
+    void dfs(const DirectedGraph& G, const int v, std::vector<Flag>& flags)
     {
         if(flags[v] != Flag::Unvisited)
             return;
@@ -72,7 +71,7 @@ protected:
 
         for(const auto [j, u] : G.outedges(v)) {
             is_dag &= flags[u] != Flag::Visiting;
-            dfs(G, u);
+            dfs(G, u, flags);
         }
 
         flags[v] = Flag::Visited;
@@ -81,11 +80,15 @@ protected:
 
 public:
     // Sort pre-topologically vertices of G.
-    TopologicalSortTarjan(const DirectedGraph& G) : flags(G.num_vertices(), Flag::Unvisited)
+    TopologicalSortTarjan(const DirectedGraph& G)
     {
-        for(int v = 0; v < G.num_vertices(); ++v) {
-            dfs(G, v);
+        const int n = G.num_vertices();
+        std::vector<Flag> flags(n, Flag::Unvisited);
+
+        for(int v = 0; v < n; ++v) {
+            dfs(G, v, flags);
         }
+
         std::reverse(order.begin(), order.end());
     }
 };

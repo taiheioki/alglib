@@ -7,7 +7,6 @@
 namespace alg
 {
 // BEGIN DISPLAY graph
-
 struct Edge
 {
     int tail, head;  // tail --> head
@@ -24,11 +23,19 @@ protected:
     std::vector<Edge> E;
 
 public:
+    // ------------------------------------------------------------------------
+    // Constructors
+    // ------------------------------------------------------------------------
+
     // Initialize an empty digraph.
     DirectedGraph() = default;
 
     // Initialize an edgeless digraph with n vetices.
     DirectedGraph(const int n) : m_inedges(n), m_outedges(n) {}
+
+    // ------------------------------------------------------------------------
+    // Getters. All the time complexities are O(1).
+    // ------------------------------------------------------------------------
 
     // Return the number of vertices.
     int num_vertices() const noexcept { return m_inedges.size(); }
@@ -54,6 +61,10 @@ public:
     // Return the array of edges.
     int num_edges() const noexcept { return E.size(); }
 
+    // ------------------------------------------------------------------------
+    // Adding vertices and edges. All the time complexities are amortized O(1).
+    // ------------------------------------------------------------------------
+
     // Add a new vertex.
     void add_vertex()
     {
@@ -74,15 +85,30 @@ public:
     void add_edge(const Edge e) { add_edge(e.tail, e.head); }
 };
 
-// Return the reversed graph.
+// Return the graph obtained by removing loops and by unifying parallel edges.
 // Time complexity: O(|V| + |E|)
-DirectedGraph reverse(const DirectedGraph& G)
+// (Thanks to: @latte0119_)
+DirectedGraph simplify(const DirectedGraph& G)
 {
-    DirectedGraph Grev(G.num_vertices());
-    for(const Edge e : G.edges()) {
-        Grev.add_edge(e.head, e.tail);
+    const int n = G.num_vertices();
+    DirectedGraph Gsimp(n);
+    std::vector<bool> buckets(n);
+
+    for(int v = 0; v < n; ++v) {
+        for(const auto [j, u] : G.outedges(v)) {
+            if(v != u && !buckets[u]) {
+                buckets[u] = true;
+                Gsimp.add_edge(v, u);
+            }
+        }
+
+        // Initialize buckets for next use. This can be done by restoring only updated buckets.
+        for(const auto [j, u] : Gsimp.outedges(v)) {
+            buckets[u] = false;
+        }
     }
-    return Grev;
+
+    return Gsimp;
 }
 // END DISPLAY graph
 
