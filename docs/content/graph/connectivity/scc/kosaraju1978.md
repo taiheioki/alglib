@@ -18,7 +18,7 @@ Sharir&nbsp;{{< cite 2 "Sharir1981" >}} も同様のアルゴリズムを与え�
 $\\Order(\|V\|+\|E\|)$
 
 ## ソースコード
-`graph/graph.hpp`, `graph/topological_sort.hpp` に依存．
+* 依存：{{< github "graph/graph.hpp" >}}, {{< github "graph/topological_sort.hpp" >}}
 
 {{< code file="graph/scc.hpp" id="kosaraju1978" >}}
 

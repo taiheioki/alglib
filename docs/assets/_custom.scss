@@ -164,6 +164,17 @@ a.cite {
   }
 }
 
+// GitHub links
+a.github {
+  color: $gray-700 !important;
+  font-size: 90%;
+  font-family: 'Roboto Mono', monospace;
+
+  .fa-github {
+    padding-right: 0.1em;
+  }
+}
+
 // Code area
 figure.code {
   font-family: 'Roboto Mono', monospace;
@@ -187,15 +198,11 @@ figure.code {
 
 // Caption
 figcaption.code-caption {
-  color: $gray-700;
-  font-size: 80%;
+  font-size: 90%;
   letter-spacing: normal;
   line-height: 1em;
   margin: 0.4em 0.2em;
 
-  .fa-github {
-    padding-right: 0.3em;
-  }
   a {
     color: inherit;
   }

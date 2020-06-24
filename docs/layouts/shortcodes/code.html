@@ -17,15 +17,11 @@
 
 <figure class="code">
   {{ $url_leaf := printf "%s#L%d-L%d" $file $start_line $end_line }}
-  {{ $url := path.Join "https://github.com/natrium11321/alglib/blob/master/include/alglib/" $url_leaf }}
   {{ $id := replaceRE "/|\\.|#" "-" $url_leaf }}
 
   <!-- Output caption -->
   <figcaption class="code-caption">
-    <a target="_blank" rel="noopener noreferrer" href={{ $url }}>
-      <i class="fab fa-github"></i>
-      {{ $url_leaf }}
-    </a>
+    {{ partial "github" $url_leaf }}
     <span style="position: relative;">
       <button type="button" class="copy-button" data-clipboard-target="#{{ $id }}">
         <span class="fas fa-copy"></span>Copy
