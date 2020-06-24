@@ -55,15 +55,18 @@ public:
     std::vector<int> order;  // order[0], order[1], ... is a pre-topological order of vertices.
 
 protected:
+    const DirectedGraph& G;
+
     enum class Flag
     {
         Unvisited,
         Visiting,
         Visited,
     };
+    std::vector<Flag> flags;
 
     // Recursively traverse vertices that are reachable from v.
-    void dfs(const DirectedGraph& G, const int v, std::vector<Flag>& flags)
+    void dfs(const int v)
     {
         if(flags[v] != Flag::Unvisited)
             return;
@@ -71,7 +74,7 @@ protected:
 
         for(const auto [j, u] : G.outedges(v)) {
             is_dag &= flags[u] != Flag::Visiting;
-            dfs(G, u, flags);
+            dfs(u);
         }
 
         flags[v] = Flag::Visited;
@@ -80,15 +83,11 @@ protected:
 
 public:
     // Sort pre-topologically vertices of G.
-    TopologicalSortTarjan(const DirectedGraph& G)
+    TopologicalSortTarjan(const DirectedGraph& G) : G(G), flags(G.num_vertices(), Flag::Unvisited)
     {
-        const int n = G.num_vertices();
-        std::vector<Flag> flags(n, Flag::Unvisited);
-
-        for(int v = 0; v < n; ++v) {
-            dfs(G, v, flags);
+        for(int v = 0; v < G.num_vertices(); ++v) {
+            dfs(v);
         }
-
         std::reverse(order.begin(), order.end());
     }
 };

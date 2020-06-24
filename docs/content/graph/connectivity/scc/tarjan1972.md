@@ -28,5 +28,5 @@ $\\Order(\|V\|+\|E\|)$
 
 ## 参考文献
 {{< references >}}
-{#Tarjan1972} R. Tarjan. Depth-first search and linear graph algorithms. *SIAM Journal on Computing*, 1(2):146--160, 1972.
+{#Tarjan1972} R. E. Tarjan. Depth-first search and linear graph algorithms. *SIAM Journal on Computing*, 1(2):146--160, 1972.
 {{< /references >}}

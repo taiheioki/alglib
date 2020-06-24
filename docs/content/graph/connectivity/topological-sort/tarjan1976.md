@@ -28,3 +28,6 @@ $\\Order(\|V\|+\|E\|)$
 [AOJ GRL_4_A: Cycle Detection for a Directed Graph](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_4_A)（位相的順序の検証を追加）
 
 ## 参考文献
+{{< references >}}
+{#Kahn1962} A. B. Kahn. Topological sorting of large networks. *Communications of the ACM*, 5(11):558--562, 1962.
+{{< /references >}}

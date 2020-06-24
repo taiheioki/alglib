@@ -40,11 +40,11 @@ protected:
         for(const auto [j, u] : G.outedges(v)) {
             if(index[u] == Unvisited)
                 lowlink = std::min(lowlink, strong_connect(u));
-            else if(index[u] != Done)  // u in S
+            else if(index[u] != Done)  // u is in S
                 lowlink = std::min(lowlink, index[u]);
         }
 
-        if(index[v] == lowlink) {
+        if(index[v] == lowlink) {  // v is the root of a strongly connected component
             components.emplace_back();
             for(;;) {
                 const int u = S.top();

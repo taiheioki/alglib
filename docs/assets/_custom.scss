@@ -169,7 +169,20 @@ figure.code {
   font-family: 'Roboto Mono', monospace;
   margin: 1em 0;
   padding-left: 1em;
-  word-break: normal;
+
+  li {
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    -webkit-hyphens: none;
+    hyphens: none;
+    text-align: start;
+    text-justify: none;
+    word-break: break-all;
+
+    &::before {
+      word-break: keep-all;
+    }
+  }
 }
 
 // Caption
