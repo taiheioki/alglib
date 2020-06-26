@@ -18,9 +18,9 @@ void verify(const alg::DirectedGraph& G, const TopologicalSort& top)
             assert(0 <= top.order[i] && top.order[i] <= n);
             inv[top.order[i]] = i;
         }
-        for(const int v : top.order) {
-            for(const auto [j, u] : G.outedges(v)) {
-                assert(inv[v] < inv[u]);
+        for(const int u : top.order) {
+            for(const auto [v, e] : G.outedges(u)) {
+                assert(inv[u] < inv[v]);
             }
         }
     }

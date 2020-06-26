@@ -23,21 +23,21 @@ public:
         std::vector<int> indeg(n);
         std::stack<int> S;  // Any other containers are OK
 
-        for(int v = 0; v < n; ++v) {
-            indeg[v] = G.indegree(v);
-            if(indeg[v] == 0) {
-                S.push(v);
+        for(int u = 0; u < n; ++u) {
+            indeg[u] = G.indegree(u);
+            if(indeg[u] == 0) {
+                S.push(u);
             }
         }
 
         while(!S.empty()) {
-            const int v = S.top();
+            const int u = S.top();
             S.pop();
-            order.push_back(v);
-            for(const auto [j, u] : G.outedges(v)) {
-                indeg[u]--;
-                if(indeg[u] == 0) {
-                    S.push(u);
+            order.push_back(u);
+            for(const auto [v, e] : G.outedges(u)) {
+                indeg[v]--;
+                if(indeg[v] == 0) {
+                    S.push(v);
                 }
             }
         }
@@ -65,28 +65,28 @@ protected:
     };
     std::vector<Flag> flags;
 
-    // Recursively traverse vertices that are reachable from v.
-    void dfs(const int v)
+    // Recursively traverse vertices that are reachable from u.
+    void dfs(const int u)
     {
-        if(flags[v] != Flag::Unvisited)
+        if(flags[u] != Flag::Unvisited)
             return;
-        flags[v] = Flag::Visiting;
+        flags[u] = Flag::Visiting;
 
-        for(const auto [j, u] : G.outedges(v)) {
-            is_dag &= flags[u] != Flag::Visiting;
-            dfs(u);
+        for(const auto [v, e] : G.outedges(u)) {
+            is_dag &= flags[v] != Flag::Visiting;
+            dfs(v);
         }
 
-        flags[v] = Flag::Visited;
-        order.push_back(v);
+        flags[u] = Flag::Visited;
+        order.push_back(u);
     }
 
 public:
     // Sort pre-topologically vertices of G.
     TopologicalSortTarjan(const DirectedGraph& G) : G(G), flags(G.n_vertices(), Flag::Unvisited)
     {
-        for(int v = 0; v < G.n_vertices(); ++v) {
-            dfs(v);
+        for(int u = 0; u < G.n_vertices(); ++u) {
+            dfs(u);
         }
         std::reverse(order.begin(), order.end());
     }

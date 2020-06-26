@@ -35,8 +35,8 @@ class GraphBase
 protected:
     using Vertex = std::vector<std::vector<std::pair<int, int>>>;
 
-    Vertex& Vin;   // Vin[v] := a list of {edge id, adjacent vertex} entering to v
-    Vertex& Vout;  // Vout[v] := a list of {edge id, adjacent vertex} leaving from v
+    Vertex& Vin;   // Vin[v] := a list of {adjacent vertex, edge id} entering to v
+    Vertex& Vout;  // Vout[v] := a list of {adjacent vertex, edge id} leaving from v
     std::vector<Edge> E;
 
     // Initialize a graph.
@@ -70,7 +70,7 @@ public:
     // Add a new vertex.
     void add_vertex()
     {
-        const int n = Vin.size();  // Vin and Vout might be the same objects
+        const int n = n_vertices();  // Vin and Vout might be the same objects
         Vin.resize(n + 1);
         Vout.resize(n + 1);
     }
@@ -80,8 +80,8 @@ public:
     {
         assert(0 <= tail && tail < n_vertices());
         assert(0 <= head && head < n_vertices());
-        Vin[head].emplace_back(n_edges(), tail);
-        Vout[tail].emplace_back(n_edges(), head);
+        Vin[head].emplace_back(tail, n_edges());
+        Vout[tail].emplace_back(head, n_edges());
         E.emplace_back(tail, head);
     }
 };
@@ -139,7 +139,7 @@ Graph<Dir> simplify(const Graph<Dir>& G)
     std::vector<bool> buckets(n);
 
     for(int u = 0; u < n; ++u) {
-        for(const auto [e, v] : G.outedges(u)) {
+        for(const auto [v, e] : G.outedges(u)) {
             if(!buckets[v] && (Dir == Direction::Directed ? u != v : u < v)) {
                 buckets[v] = true;
                 Gsimp.add_edge(u, v);
@@ -148,7 +148,7 @@ Graph<Dir> simplify(const Graph<Dir>& G)
 
         // Reset buckets for next use. This can be done by restoring only updated buckets, which
         // improves time complexity.
-        for(const auto [e, v] : Gsimp.outedges(u)) {
+        for(const auto [v, e] : Gsimp.outedges(u)) {
             buckets[v] = false;
         }
     }

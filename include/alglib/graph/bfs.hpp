@@ -32,14 +32,14 @@ public:
         dist[s] = 0;
 
         while(!Q.empty()) {
-            const int v = Q.front();
+            const int u = Q.front();
             Q.pop();
-            for(const auto [j, u] : G.outedges(v)) {
-                if(shortest_path_tree[u].parent == TreeNode::Invalid) {
-                    Q.push(u);
-                    shortest_path_tree[u].parent = v;
-                    shortest_path_tree[v].children.push_back(u);
-                    dist[u] = dist[v] + 1;
+            for(const auto [v, e] : G.outedges(u)) {
+                if(shortest_path_tree[v].parent == TreeNode::Invalid) {
+                    Q.push(v);
+                    shortest_path_tree[v].parent = u;
+                    shortest_path_tree[u].children.push_back(v);
+                    dist[v] = dist[u] + 1;
                 }
             }
         }

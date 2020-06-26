@@ -13,15 +13,15 @@ class EulerianTrailHierholzer
 {
 private:
     const DirectedGraph& G;
-    std::vector<int> outdeg;  // outdeg[v] := the out-degree of v in the remaining graph.
+    std::vector<int> outdeg;  // outdeg[u] := the out-degree of u in the remaining graph.
 
-    void visit(const int v)
+    void visit(const int u)
     {
-        while(outdeg[v] > 0) {
-            --outdeg[v];  // Virturally pop the edge by decreasing outdeg[v]
-            const auto [j, u] = G.outedges(v)[outdeg[v]];
-            visit(u);
-            trail.push_back(j);
+        while(outdeg[u] > 0) {
+            --outdeg[u];  // Virturally pop the edge by decreasing outdeg[v]
+            const auto [v, e] = G.outedges(u)[outdeg[u]];
+            visit(v);
+            trail.push_back(e);
         }
     }
 
@@ -46,11 +46,11 @@ public:
 
         // Search for a starting point
         int s = 0;
-        for(int v = 0; v < G.n_vertices(); ++v) {
-            outdeg[v] = G.outdegree(v);
-            if(G.indegree(v) < outdeg[v]) {
+        for(int u = 0; u < G.n_vertices(); ++u) {
+            outdeg[u] = G.outdegree(u);
+            if(G.indegree(u) < outdeg[u]) {
                 result = Result::SemiEulerian;
-                s      = v;
+                s      = u;
             }
         }
 

@@ -28,29 +28,29 @@ protected:
         Done      = -2,
     };
 
-    // Find strongly connected components in the DFS tree rooted at v.
-    // The return value is the "lowlink" number of v.
-    int strong_connect(const int v)
+    // Find strongly connected components in the DFS tree rooted at u.
+    // The return value is the "lowlink" number of u.
+    int strong_connect(const int u)
     {
-        S.push(v);
-        index[v]    = num_visited;
+        S.push(u);
+        index[u]    = num_visited;
         int lowlink = num_visited;
         ++num_visited;
 
-        for(const auto [j, u] : G.outedges(v)) {
-            if(index[u] == Unvisited)
-                lowlink = std::min(lowlink, strong_connect(u));
-            else if(index[u] != Done)  // u is in S
-                lowlink = std::min(lowlink, index[u]);
+        for(const auto [v, e] : G.outedges(u)) {
+            if(index[v] == Unvisited)
+                lowlink = std::min(lowlink, strong_connect(v));
+            else if(index[v] != Done)  // v is in S
+                lowlink = std::min(lowlink, index[v]);
         }
 
-        if(index[v] == lowlink) {  // v is the root of a strongly connected component
+        if(index[u] == lowlink) {  // u is the root of a strongly connected component
             components.emplace_back();
             for(;;) {
-                const int u = S.top();
+                const int v = S.top();
                 S.pop();
-                index[u] = Done;
-                components.back().push_back(u);
+                index[v] = Done;
+                components.back().push_back(v);
                 if(u == v)
                     break;
             }
@@ -63,9 +63,9 @@ public:
     // Find strongly connected components of G in topological order.
     SccTarjan(const DirectedGraph& G) : G(G), index(G.n_vertices(), Unvisited), num_visited(0)
     {
-        for(int v = 0; v < G.n_vertices(); ++v) {
-            if(index[v] == Unvisited) {
-                strong_connect(v);
+        for(int u = 0; u < G.n_vertices(); ++u) {
+            if(index[u] == Unvisited) {
+                strong_connect(u);
             }
         }
         std::reverse(components.begin(), components.end());
@@ -83,15 +83,15 @@ protected:
     const DirectedGraph& G;
     std::vector<bool> visited;
 
-    // Visit "Unvisited" vertices reachable to v on G.
-    void reachable_to(const int v)
+    // Visit "Unvisited" vertices reachable to u on G.
+    void reachable_to(const int u)
     {
-        visited[v] = true;
-        components.back().push_back(v);
+        visited[u] = true;
+        components.back().push_back(u);
 
-        for(const auto [j, u] : G.inedges(v)) {
-            if(!visited[u]) {
-                reachable_to(u);
+        for(const auto [v, e] : G.inedges(u)) {
+            if(!visited[v]) {
+                reachable_to(v);
             }
         }
     }
@@ -100,10 +100,10 @@ public:
     // Find strongly connected components of G in topological order.
     SccKosaraju(const DirectedGraph& G) : G(G), visited(G.n_vertices())
     {
-        for(const int v : TopologicalSortTarjan(G).order) {
-            if(!visited[v]) {
+        for(const int u : TopologicalSortTarjan(G).order) {
+            if(!visited[u]) {
                 components.emplace_back();
-                reachable_to(v);
+                reachable_to(u);
             }
         }
     }
