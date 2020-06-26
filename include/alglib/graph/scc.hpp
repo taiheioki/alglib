@@ -60,9 +60,10 @@ protected:
     }
 
 public:
-    SccTarjan(const DirectedGraph& G) : G(G), index(G.num_vertices(), Unvisited), num_visited(0)
+    // Find strongly connected components of G in topological order.
+    SccTarjan(const DirectedGraph& G) : G(G), index(G.n_vertices(), Unvisited), num_visited(0)
     {
-        for(int v = 0; v < G.num_vertices(); ++v) {
+        for(int v = 0; v < G.n_vertices(); ++v) {
             if(index[v] == Unvisited) {
                 strong_connect(v);
             }
@@ -82,7 +83,7 @@ protected:
     const DirectedGraph& G;
     std::vector<bool> visited;
 
-    // Visit "Unvisited" vertices of G reachable to v.
+    // Visit "Unvisited" vertices reachable to v on G.
     void reachable_to(const int v)
     {
         visited[v] = true;
@@ -96,7 +97,8 @@ protected:
     }
 
 public:
-    SccKosaraju(const DirectedGraph& G) : G(G), visited(G.num_vertices())
+    // Find strongly connected components of G in topological order.
+    SccKosaraju(const DirectedGraph& G) : G(G), visited(G.n_vertices())
     {
         for(const int v : TopologicalSortTarjan(G).order) {
             if(!visited[v]) {

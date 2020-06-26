@@ -19,7 +19,7 @@ public:
     // Test if G is a DAG, and if so, sort vertices of G topologically.
     TopologicalSortKahn(const DirectedGraph& G)
     {
-        const int n = G.num_vertices();
+        const int n = G.n_vertices();
         std::vector<int> indeg(n);
         std::stack<int> S;  // Any other containers are OK
 
@@ -83,9 +83,9 @@ protected:
 
 public:
     // Sort pre-topologically vertices of G.
-    TopologicalSortTarjan(const DirectedGraph& G) : G(G), flags(G.num_vertices(), Flag::Unvisited)
+    TopologicalSortTarjan(const DirectedGraph& G) : G(G), flags(G.n_vertices(), Flag::Unvisited)
     {
-        for(int v = 0; v < G.num_vertices(); ++v) {
+        for(int v = 0; v < G.n_vertices(); ++v) {
             dfs(v);
         }
         std::reverse(order.begin(), order.end());

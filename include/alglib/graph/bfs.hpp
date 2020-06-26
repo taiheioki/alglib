@@ -25,7 +25,7 @@ public:
 
     // Ctor -- the main part of the algorithm
     BFS(const DirectedGraph& G, const int s)
-      : shortest_path_tree(G.num_vertices(), s), dist(G.num_vertices(), Unreachable)
+      : shortest_path_tree(G.n_vertices(), s), dist(G.n_vertices(), Unreachable)
     {
         std::queue<int> Q;
         Q.push(s);

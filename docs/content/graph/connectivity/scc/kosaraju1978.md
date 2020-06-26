@@ -11,7 +11,7 @@ weight: 2
 この順序において先頭の頂点に{{< link "../../path" "到達可能" >}}な頂点集合を $C\_1$ とすると，$C\_1$ は $G$ の強連結成分であって，強連結成分の族上の DAG の{{< link "../topological-sort" "位相的" >}}順序において先頭に来ることができる．
 $G$ から $C\_1$ を取り除き，同様の操作を繰り返すが，前述の pre-topological 順序を $V \\setminus C\_1$ に制限した順序は新たな $G$ においても pre-topological であるため，トポロジカルソートを 2 度適用する必要はない．
 
-Data Structures and Algorithms&nbsp;{{< cite 1 "Aho1981" >}}によると R. Kosaraju が 1978 年に提案したアルゴリズムのようだが未出版である．
+Aho et al.&nbsp;{{< cite 1 "Aho1981" >}}によると R. Kosaraju が 1978 年に提案したアルゴリズムのようだが未出版である．
 Sharir&nbsp;{{< cite 2 "Sharir1981" >}} も同様のアルゴリズムを与えている．
 
 ## 計算量

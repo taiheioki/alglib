@@ -10,7 +10,7 @@ void verify(const alg::DirectedGraph& G, const TopologicalSort& top)
 {
     if(top.is_dag) {
         // Check of topological ordering
-        const int n = G.num_vertices();
+        const int n = G.n_vertices();
         assert(int(top.order.size()) == n);
 
         std::vector<int> inv(n);
