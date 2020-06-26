@@ -16,37 +16,37 @@ struct Edge
     constexpr Edge(const int tail, const int head) noexcept : tail(tail), head(head) {}
 };
 
-// A tag indicating directed graphs.
-struct Directed
-{};
+// A tag indicating type of graph direction.
+enum class Direction
+{
+    Directed,
+    Undirected,
+};
 
-// A tag indicating undirected graphs.
-struct Undirected
-{};
-
-template<class Direction>
+template<Direction>
 class Graph;
 
-using DirectedGraph   = Graph<Directed>;
-using UndirectedGraph = Graph<Undirected>;
+using DirectedGraph   = Graph<Direction::Directed>;
+using UndirectedGraph = Graph<Direction::Undirected>;
 
-template<>
-class Graph<Directed>
+// Common implementation of directed and undirected graphs
+class GraphBase
 {
 protected:
-    // Vin[v] := a list of {edge id, adjacent vertex} entering to v
-    // Vout[v] := a list of {edge id, adjacent vertex} leaving from v
-    std::vector<std::vector<std::pair<int, int>>> Vin, Vout;
+    using Vertex = std::vector<std::vector<std::pair<int, int>>>;
+
+    Vertex& Vin;   // Vin[v] := a list of {edge id, adjacent vertex} entering to v
+    Vertex& Vout;  // Vout[v] := a list of {edge id, adjacent vertex} leaving from v
     std::vector<Edge> E;
 
-public:
-    // Initialize an edgeless digraph with n vetices.
-    Graph(const int n = 0) : Vin(n), Vout(n) {}
+    // Initialize a graph.
+    GraphBase(Vertex& Vin, Vertex& Vout) : Vin(Vin), Vout(Vout) {}
 
+public:
     // Return the number of vertices.
     int n_vertices() const noexcept { return Vin.size(); }
 
-    // Return the array of {edge id, head} entering to v.
+    // Return the array of {edge id, tail} entering to v.
     auto& inedges(const int u) const { return Vin[u]; }
 
     // Return the array of {edge id, head} leaving from v.
@@ -70,8 +70,9 @@ public:
     // Add a new vertex.
     void add_vertex()
     {
-        Vin.emplace_back();
-        Vout.emplace_back();
+        const int n = Vin.size();  // Vin and Vout might be the same objects
+        Vin.resize(n + 1);
+        Vout.resize(n + 1);
     }
 
     // Add a new edge.
@@ -85,52 +86,34 @@ public:
     }
 };
 
+// In case of directed graphs, Vin and Vout are different objects.
 template<>
-class Graph<Undirected>
+class Graph<Direction::Directed> : public GraphBase
 {
 protected:
-    // V[v] := a list of {edge id, adjacent vertex} adjacent to v
-    std::vector<std::vector<std::pair<int, int>>> V;
-    std::vector<Edge> E;
+    Vertex Vin, Vout;
 
 public:
-    // Initialize an edgeless graph with n vetices.
-    Graph(const int n = 0) : V(n) {}
+    // Initialize an edgeless directed graph with n vertices.
+    Graph(const int n = 0) : GraphBase(Vin, Vout), Vin(n), Vout(n) {}
+};
 
-    // Return the number of vertices.
-    int n_vertices() const noexcept { return V.size(); }
+// In case of undirected graphs, Vin and Vout are the same objects.
+template<>
+class Graph<Direction::Undirected> : public GraphBase
+{
+protected:
+    Vertex V;
+
+public:
+    // Initialize an edgeless undirected graph with n vertices.
+    Graph(const int n = 0) : GraphBase(V, V), V(n) {}
 
     // Return the array of {edge id, head} adjacent to v.
     auto& edges(const int u) const { return V[u]; }
-    auto& inedges(const int u) const { return V[u]; }
-    auto& outedges(const int u) const { return V[u]; }
 
-    // Return the edegree of v.
+    // Return the degree of v.
     int degree(const int u) const { return V[u].size(); }
-    int indegree(const int u) const { return degree(u); }
-    int outdegree(const int u) const { return degree(u); }
-
-    // Return the array of edges.
-    int n_edges() const noexcept { return E.size(); }
-
-    // Return the e-th edge.
-    Edge edge(const int e) const { return E[e]; }
-
-    // Return the array of edges.
-    auto& edges() const noexcept { return E; }
-
-    // Add a new vertex.
-    void add_vertex() { V.emplace_back(); }
-
-    // Add a new edge.
-    void add_edge(const int tail, const int head)
-    {
-        assert(0 <= tail && tail < n_vertices());
-        assert(0 <= head && head < n_vertices());
-        V[head].emplace_back(n_edges(), tail);
-        V[tail].emplace_back(n_edges(), head);
-        E.emplace_back(tail, head);
-    }
 };
 // END DISPLAY graph
 
@@ -148,23 +131,25 @@ DirectedGraph reverse(const DirectedGraph& G)
 // Return the graph obtained by removing loops and by unifying parallel edges.
 // Time complexity: O(|V| + |E|)
 // (Thanks to: @latte0119_)
-DirectedGraph simplify(const DirectedGraph& G)
+template<Direction Dir>
+Graph<Dir> simplify(const Graph<Dir>& G)
 {
     const int n = G.n_vertices();
-    DirectedGraph Gsimp(n);
+    Graph<Dir> Gsimp(n);
     std::vector<bool> buckets(n);
 
-    for(int v = 0; v < n; ++v) {
-        for(const auto [j, u] : G.outedges(v)) {
-            if(v != u && !buckets[u]) {
-                buckets[u] = true;
-                Gsimp.add_edge(v, u);
+    for(int u = 0; u < n; ++u) {
+        for(const auto [e, v] : G.outedges(u)) {
+            if(!buckets[v] && (Dir == Direction::Directed ? u != v : u < v)) {
+                buckets[v] = true;
+                Gsimp.add_edge(u, v);
             }
         }
 
-        // Initialize buckets for next use. This can be done by restoring only updated buckets.
-        for(const auto [j, u] : Gsimp.outedges(v)) {
-            buckets[u] = false;
+        // Reset buckets for next use. This can be done by restoring only updated buckets, which
+        // improves time complexity.
+        for(const auto [e, v] : Gsimp.outedges(u)) {
+            buckets[v] = false;
         }
     }
 
