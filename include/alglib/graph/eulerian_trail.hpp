@@ -8,6 +8,9 @@
 
 namespace alg
 {
+// Check whether G is Eulerian, i.e., G has an Eulerian tour.
+[[nodiscard]] bool is_eulerian(const DirectedGraph& G) {}
+
 // BEGIN DISPLAY hierholzer1873
 class EulerianTrailHierholzer
 {
