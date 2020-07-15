@@ -29,4 +29,24 @@ weight: 2
 グラフの表現方法は
 
 ## ソースコード
-{{< code file="graph/graph.hpp" id="graph" >}}
+まず辺を表す構造体の定義は以下である．
+無向・有向両方で使用するが，無向辺の場合は `tail`, `head` の区別はない．
+競技プログラミングのライブラリでは `tail`, `head` の代わりに `src`, `dst` という名前になっていることが多いように思うが，ここはグラフ理論の標準的な用語に倣った．
+
+{{< code file="graph/graph.hpp" id="graph/edge" >}}
+
+続いて，グラフを表すクラスの宣言を行う．
+実際の定義は少し複雑なので，先に宣言だけ行っておく．
+
+{{< code file="graph/graph.hpp" id="graph/graph_declare" >}}
+
+無向・有向グラフ両方の基底クラスである `GrpahBase` を定義する．
+これは，無向・有向グラフ両方で必要な実装を共通化し，継承することでその実装を[mixin](https://ja.wikipedia.org/wiki/Mixin)するという手法である．
+
+{{< code file="graph/graph.hpp" id="graph/graph_base" >}}
+
+無向グラフの定義．
+無向グラフでは `Vin` と `Vout` は同じオブジェクトを指しており，`inedges(v)`, `outedges(v)`, `edges(v)` と `indegree(v)`, `outdegree(v)`, `degree(v)` はそれぞれすべて同じである．
+また，完全グラフなどの典型的なグラフを構築する静的メンバ関数を定義している．
+
+{{< code file="graph/graph.hpp" id="graph/undirected_graph" >}}

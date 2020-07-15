@@ -9,11 +9,13 @@
 using namespace std;
 using namespace alg;
 
+mt19937 engine;
+
 void test(const UndirectedGraph& G, bool ans)
 {
     static int ncase = 0;
     cerr << "Case #" << ++ncase << endl;
-    assert(is_connected(G) == ans);
+    assert(is_connected(shuffle_vertices(G, engine)) == ans);
 }
 
 int main()
@@ -32,7 +34,6 @@ int main()
     test(unite(K300, UndirectedGraph(1)), false);
     test(unite(K300, K300), false);
 
-    default_random_engine engine(0);
     test(generate_connected_graph(10000, 100000, engine), true);
     test(generate_graph(100001, 99999, engine), false);
 

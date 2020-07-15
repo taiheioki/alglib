@@ -10,7 +10,7 @@
 
 namespace alg
 {
-// BEGIN DISPLAY graph
+// BEGIN DISPLAY graph/edge
 struct Edge
 {
     int tail, head;  // tail --> head
@@ -18,7 +18,9 @@ struct Edge
     Edge() = default;
     constexpr Edge(const int tail, const int head) noexcept : tail(tail), head(head) {}
 };
+// END DISPLAY graph/edge
 
+// BEGIN DISPLAY graph/graph_declare
 // A tag indicating type of graph direction.
 enum class Direction
 {
@@ -31,7 +33,9 @@ class Graph;
 
 using UndirectedGraph = Graph<Direction::Undirected>;
 using DirectedGraph   = Graph<Direction::Directed>;
+// END DISPLAY graph/graph_declare
 
+// BEGIN DISPLAY graph/graph_base
 // Common implementation of directed and undirected graphs
 class GraphBase
 {
@@ -39,7 +43,7 @@ protected:
     using Vertex = std::vector<std::vector<std::pair<int, int>>>;
 
     Vertex& Vin;   // Vin[v] := a list of {adjacent vertex, edge id} entering to v
-    Vertex& Vout;  // Vout[v] := a list of {adjacent vertex, edge id} leaving from v
+    Vertex& Vout;  // Vout[u] := a list of {adjacent vertex, edge id} leaving from u
     std::vector<Edge> E;
 
     // Initialize a graph.
@@ -50,15 +54,15 @@ public:
     [[nodiscard]] int n_vertices() const noexcept { return Vin.size(); }
 
     // Return the array of {edge id, tail} entering to v.
-    [[nodiscard]] auto& inedges(const int u) const { return Vin[u]; }
+    [[nodiscard]] auto& inedges(const int v) const { return Vin[v]; }
 
-    // Return the array of {edge id, head} leaving from v.
+    // Return the array of {edge id, head} leaving from u.
     [[nodiscard]] auto& outedges(const int u) const { return Vout[u]; }
 
     // Return the indegree of v.
-    [[nodiscard]] int indegree(const int u) const { return Vin[u].size(); }
+    [[nodiscard]] int indegree(const int v) const { return Vin[v].size(); }
 
-    // Return the outedegree of v.
+    // Return the outedegree of u.
     [[nodiscard]] int outdegree(const int u) const { return Vout[u].size(); }
 
     // Return the array of edges.
@@ -88,7 +92,9 @@ public:
         E.emplace_back(tail, head);
     }
 };
+// END DISPLAY graph/graph_base
 
+// BEGIN DISPLAY graph/undirected_graph
 // In case of undirected graphs, Vin and Vout are the same objects.
 template<>
 class Graph<Direction::Undirected> : public GraphBase
@@ -153,6 +159,7 @@ public:
     // Generate the cycle C_n.
     [[nodiscard]] static Graph cycle(const int n)
     {
+        assert(n >= 1);
         auto G = path(n);
         G.add_edge(n - 1, 0);
         return G;
@@ -177,6 +184,7 @@ public:
         return G;
     }
 };
+// END DISPLAY graph/undirected_graph
 
 // In case of directed graphs, Vin and Vout are different objects.
 template<>
@@ -315,6 +323,121 @@ template<Direction Dir>
     })(0);
 
     return std::find(visited.begin(), visited.end(), false) == visited.end();
+}
+
+// Check whether G is strongly connected.
+// Time Complexity: O(|V| + |E|)
+[[nodiscard]] bool is_strongly_connected(const DirectedGraph& G)
+{
+    if(G.n_vertices() == 0)
+        return false;  // The null graph is not strongly connected
+
+    // Check whether all vertices are reachble from 0
+    std::vector<bool> visited(G.n_vertices());
+    FixPoint([&](const auto dfs, const int u) -> void {
+        visited[u] = true;
+        for(const auto [v, e] : G.outedges(u)) {
+            if(!visited[v])
+                dfs(v);
+        }
+    })(0);
+
+    if(std::find(visited.begin(), visited.end(), false) != visited.end())
+        return false;
+
+    // Check whether all vertices are reachble to 0
+    std::fill(visited.begin(), visited.end(), false);
+    FixPoint([&](const auto dfs, const int v) -> void {
+        visited[v] = true;
+        for(const auto [u, e] : G.inedges(v)) {
+            if(!visited[u])
+                dfs(u);
+        }
+    })(0);
+
+    return std::find(visited.begin(), visited.end(), false) == visited.end();
+}
+
+// Check whether G has a cycle.
+// Time Complexity: O(|V| + |E|)
+[[nodiscard]] bool has_cycle(const UndirectedGraph& G)
+{
+    const int n = G.n_vertices();
+    std::vector<bool> visited(n);
+
+    const auto dfs = FixPoint([&](const auto dfs, const int u, const int parent_edge) -> bool {
+        visited[u] = true;
+        for(const auto [v, e] : G.edges(u)) {
+            if(e != parent_edge && (!visited[v] || dfs(v, e)))
+                return true;
+        }
+        return false;
+    });
+
+    for(int u = 0; u < n; ++u) {
+        if(!visited[u] && dfs(u, -1))
+            return true;
+    }
+
+    return false;
+}
+
+// Check whether G has a directed cycle.
+// Time Complexity: O(|V| + |E|)
+[[nodiscard]] bool has_cycle(const DirectedGraph& G)
+{
+    enum class Flag
+    {
+        Unvisited,
+        Visiting,
+        Visited,
+    };
+    const int n = G.n_vertices();
+    std::vector<Flag> flags(n);
+
+    const auto dfs = FixPoint([&](const auto dfs, const int u) -> bool {
+        if(flags[u] != Flag::Unvisited)
+            return flags[u] == Flag::Visiting;
+        flags[u] = Flag::Visiting;
+
+        for(const auto [v, e] : G.outedges(u)) {
+            if(dfs(v)) {
+                flags[u] = Flag::Visited;
+                return true;
+            }
+        }
+
+        flags[u] = Flag::Visited;
+        return false;
+    });
+
+    for(int u = 0; u < n; ++u) {
+        if(dfs(u))
+            return true;
+    }
+
+    return false;
+}
+
+// Check whether G is a forest.
+// Time Complexity: O(|V| + |E|)
+[[nodiscard]] bool is_forest(const UndirectedGraph& G)
+{
+    return !has_cycle(G);
+}
+
+// Check whether G is a tree.
+// Time Complexity: O(|V| + |E|)
+[[nodiscard]] bool is_tree(const UndirectedGraph& G)
+{
+    return is_connected(G) && is_forest(G);
+}
+
+// Check whether G is a directed acyclic graph (DAG).
+// Time Complexity: O(|V| + |E|)
+[[nodiscard]] bool is_dag(const DirectedGraph& G)
+{
+    return !has_cycle(G);
 }
 
 // Check whether G is simple.

@@ -8,6 +8,22 @@
 
 #include "alglib/graph/graph.hpp"
 
+template<alg::Direction Dir, class URBG>
+alg::Graph<Dir> shuffle_vertices(const alg::Graph<Dir>& G, URBG& engine)
+{
+    const int n = G.n_vertices();
+    std::vector<int> perm(n);
+    std::iota(perm.begin(), perm.end(), 0);
+    std::shuffle(perm.begin(), perm.end(), engine);
+
+    alg::Graph<Dir> H(n);
+    for(const auto [u, v] : G.edges()) {
+        H.add_edge(perm[u], perm[v]);
+    }
+
+    return H;
+}
+
 template<class URBG>
 alg::UndirectedGraph generate_graph(const int n, const int m, URBG& engine)
 {
@@ -47,17 +63,12 @@ alg::UndirectedGraph generate_bipartite_graph(const int n1, const int n2, const 
 template<class URBG>
 alg::UndirectedGraph generate_tree(const int n, URBG& engine)
 {
-    std::vector<int> perm(n);
-    std::iota(perm.begin(), perm.end(), 0);
-    std::shuffle(perm.begin(), perm.end(), engine);
-
     alg::UndirectedGraph G(n);
-    for(int i = 1; i < n; ++i) {
-        const int u = perm[std::uniform_int_distribution(0, i - 1)(engine)], v = perm[i];
+    for(int v = 1; v < n; ++v) {
+        const int u = std::uniform_int_distribution(0, v - 1)(engine);
         G.add_edge(u, v);
     }
-
-    return G;
+    return shuffle_vertices(G, engine);
 }
 
 template<class URBG>

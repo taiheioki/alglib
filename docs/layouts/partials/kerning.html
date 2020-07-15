@@ -26,7 +26,7 @@
 
   <!-- For every tag -->
   {{ range $tag := $tags }}
-    {{ $pattern := printf "<%[1]s[^>]*>(?:.|\\n)*?<\\/%[1]s>" $tag }}
+    {{ $pattern := printf "<%[1]s(| [^>]*)>(?:.|\\n)*?<\\/%[1]s>" $tag }}
     {{ $paragraphs := findRE $pattern $text | uniq }}
 
     <!-- For every paragraph -->
