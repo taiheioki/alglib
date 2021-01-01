@@ -2,6 +2,7 @@
 #define ALGLIB_GRAPH_GRAPH_HPP_
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <utility>
 #include <vector>
@@ -10,6 +11,38 @@
 
 namespace alg
 {
+struct UndirectedEdge : public std::array<int, 2>
+{
+    // Whether the edge covers a vertex u.
+    [[nodiscard]] constexpr bool covers(const int u) const noexcept
+    {
+        return (*this)[0] == u || (*this)[1] == u;
+    }
+
+    [[nodiscard]] constexpr bool operator==(const UndirectedEdge e) const noexcept
+    {
+        return ((*this)[0] == e[0] && (*this)[1] == e[1])
+               || ((*this)[0] == e[1] && (*this)[1] == e[0]);
+    }
+
+    [[nodiscard]] constexpr bool operator!=(const UndirectedEdge e) const noexcept
+    {
+        return !(*this == e);
+    }
+};
+
+// Check whether e is a self-loop.
+// Time Complexity: O(1)
+bool is_loop(const UndirectedEdge e)
+{
+    return e[0] == e[1];
+}
+
+class UndirectedGraph
+{
+public:
+};
+
 // BEGIN DISPLAY graph/edge
 struct Edge
 {
