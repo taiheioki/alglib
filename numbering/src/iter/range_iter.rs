@@ -7,12 +7,12 @@ use num_traits::{
 
 /// An iterator over the half-open range [start, end).
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct NumRange<T> {
+pub struct RangeIter<T> {
     start: T,
     end: T,
 }
 
-impl<T> NumRange<T>
+impl<T> RangeIter<T>
 where
     T: Clone,
 {
@@ -35,7 +35,7 @@ where
     }
 }
 
-impl<T> NumRange<T>
+impl<T> RangeIter<T>
 where
     T: CheckedSub + TryInto<usize>,
 {
@@ -55,7 +55,7 @@ where
     }
 }
 
-impl<T> Iterator for NumRange<T>
+impl<T> Iterator for RangeIter<T>
 where
     T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
     usize: TryInto<T>,
@@ -134,7 +134,7 @@ where
     }
 }
 
-impl<T> DoubleEndedIterator for NumRange<T>
+impl<T> DoubleEndedIterator for RangeIter<T>
 where
     T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
     usize: TryInto<T>,
@@ -174,7 +174,7 @@ where
     }
 }
 
-impl<T> ExactSizeIterator for NumRange<T>
+impl<T> ExactSizeIterator for RangeIter<T>
 where
     T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
     usize: TryInto<T>,
@@ -192,7 +192,7 @@ where
     }
 }
 
-impl<T> FusedIterator for NumRange<T>
+impl<T> FusedIterator for RangeIter<T>
 where
     T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
     usize: TryInto<T>,
@@ -205,10 +205,10 @@ mod tests {
 
     #[test]
     fn next() {
-        let mut num = NumRange::new(0, 0u128);
+        let mut num = RangeIter::new(0, 0u128);
         assert_eq!(num.next(), None);
 
-        let mut num = NumRange::new(0, 3i128);
+        let mut num = RangeIter::new(0, 3i128);
         assert_eq!(num.next(), Some(0));
         assert_eq!(num.next(), Some(1));
         assert_eq!(num.next(), Some(2));
@@ -218,31 +218,31 @@ mod tests {
 
     #[test]
     fn nth() {
-        let mut num = NumRange::new(0, 3);
+        let mut num = RangeIter::new(0, 3);
         assert_eq!(num.nth(1), Some(1));
         assert_eq!(num.nth(1), None);
 
-        let mut num = NumRange::new(0, std::i8::MAX);
+        let mut num = RangeIter::new(0, std::i8::MAX);
         assert_eq!(num.nth((i8::MAX - 1) as usize), Some(i8::MAX - 1));
         assert_eq!(num.next(), None);
 
-        let mut num = NumRange::new(0, u8::MAX);
+        let mut num = RangeIter::new(0, u8::MAX);
         assert_eq!(num.nth(u8::MAX as usize), None);
 
-        let mut num = NumRange::new(0, i16::MAX);
+        let mut num = RangeIter::new(0, i16::MAX);
         assert_eq!(num.nth((i16::MAX as usize) + 1), None);
         assert_eq!(num.next(), None);
 
-        let mut num = NumRange::new(u16::MAX - 1, u16::MAX);
+        let mut num = RangeIter::new(u16::MAX - 1, u16::MAX);
         assert_eq!(num.nth(100), None);
     }
 
     #[test]
     fn next_back() {
-        let mut num = NumRange::new(0, 0isize);
+        let mut num = RangeIter::new(0, 0isize);
         assert_eq!(num.next_back(), None);
 
-        let mut num = NumRange::new(5u64, 10u64);
+        let mut num = RangeIter::new(5u64, 10u64);
         assert_eq!(num.next_back(), Some(9));
         assert_eq!(num.next(), Some(5));
         assert_eq!(num.next_back(), Some(8));
@@ -254,25 +254,25 @@ mod tests {
 
     #[test]
     fn nth_back() {
-        let mut num = NumRange::new(2, 10i32);
+        let mut num = RangeIter::new(2, 10i32);
         assert_eq!(num.nth_back(1), Some(8));
         assert_eq!(num.nth_back(3), Some(4));
         assert_eq!(num.nth_back(1), Some(2));
         assert_eq!(num.nth_back(1), None);
         assert_eq!(num.next(), None);
 
-        let mut num = NumRange::new(0, 10i8);
+        let mut num = RangeIter::new(0, 10i8);
         assert_eq!(num.nth_back(usize::MAX), None);
         assert_eq!(num.next(), None);
 
-        let mut num = NumRange::new(0, 10u8);
+        let mut num = RangeIter::new(0, 10u8);
         assert_eq!(num.nth_back(20), None);
         assert_eq!(num.next(), None);
     }
 
     #[test]
     fn len() {
-        let mut num = NumRange::new(10u32, 20u32);
+        let mut num = RangeIter::new(10u32, 20u32);
         assert_eq!(num.len(), 10);
         num.next();
         assert_eq!(num.len(), 9);
@@ -285,12 +285,12 @@ mod tests {
     #[test]
     #[should_panic]
     fn negative_length() {
-        NumRange::new(10, 5);
+        RangeIter::new(10, 5);
     }
 
     #[test]
     #[should_panic]
     fn exceed_usize_range() {
-        NumRange::new(0, u128::MAX);
+        RangeIter::new(0, u128::MAX);
     }
 }

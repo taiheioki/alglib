@@ -1,4 +1,4 @@
-use crate::{iter::MapNumIter, Numbering};
+use crate::{iter::MapNumIter, OrderedSet};
 
 /// The numbering designated by the forward map (domain -> number) and the backward map (number -> domain).
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -65,40 +65,31 @@ where
     }
 }
 
-impl<D, F, B> Numbering for MapNum<F, B>
+impl<D, F, B> OrderedSet for MapNum<F, B>
 where
     D: Eq,
     F: Fn(D) -> Option<usize>,
     B: Fn(usize) -> Option<D> + Clone,
 {
-    type Domain = D;
-    type DomainIter = MapNumIter<B>;
-
-    /// Returns the numbering of the specified element, or `None` if the domain does not contain it.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
-    #[inline]
-    fn get(&self, x: D) -> Option<usize> {
-        (self.forward)(x)
-    }
+    type Element = D;
+    type Iter = MapNumIter<B>;
 
     /// Returns an iterator that enumerates the domain elements in the ascending order of numbering.
     ///
     /// # Time Complexity
     /// `O(1)`
     #[inline]
-    fn domain(&self) -> Self::DomainIter {
-        Self::DomainIter::new(self.len, self.backward.clone())
+    fn iter(&self) -> Self::Iter {
+        MapNumIter::new(self.len, self.backward.clone())
     }
 
-    /// Returns the cardinality of the domain.
+    /// Returns the numbering of the specified element, or `None` if the domain does not contain it.
     ///
     /// # Time Complexity
-    /// `O(1)`
+    /// `O(T)`, where `T` is the time to evaluate `(self.forward)(x)`.
     #[inline]
-    fn len(&self) -> usize {
-        self.len
+    fn index_of(&self, x: D) -> Option<usize> {
+        (self.forward)(x)
     }
 }
 
@@ -112,8 +103,8 @@ mod tests {
         let backward = |i: usize| Some(i).filter(|&i| i == 0).and(Some(()));
         let num = MapNum::new(forward, backward);
         assert_eq!(num.len(), 1);
-        assert_eq!(num.get(()), Some(0));
-        assert_eq!(num.domain().collect::<Vec<_>>(), vec![()]);
+        assert_eq!(num.index_of(()), Some(0));
+        assert_eq!(num.iter().collect::<Vec<_>>(), vec![()]);
     }
 
     #[test]
@@ -124,9 +115,9 @@ mod tests {
 
         let num = MapNum::new(forward, backward);
         assert_eq!(num.len(), 4);
-        assert_eq!(num.get("two"), Some(2));
-        assert_eq!(num.get("four"), None);
-        assert_eq!(num.domain().collect::<Vec<_>>(), domain);
+        assert_eq!(num.index_of("two"), Some(2));
+        assert_eq!(num.index_of("four"), None);
+        assert_eq!(num.iter().collect::<Vec<_>>(), domain);
     }
 
     #[test]
@@ -140,13 +131,13 @@ mod tests {
 
         let num = MapNum::new(forward, backward);
         assert_eq!(num.len(), 4);
-        assert_eq!(num.get(&domain[1]), Some(1));
+        assert_eq!(num.index_of(&domain[1]), Some(1));
 
         let four = "four".to_string();
-        assert_eq!(num.get(&four), None);
+        assert_eq!(num.index_of(&four), None);
 
         assert_eq!(
-            num.domain().collect::<Vec<_>>(),
+            num.iter().collect::<Vec<_>>(),
             domain.iter().collect::<Vec<_>>()
         );
     }
@@ -162,8 +153,8 @@ mod tests {
 
         let num = MapNum::new(forward, backward);
         assert_eq!(num.len(), 4);
-        assert_eq!(num.get(domain[1].clone()), Some(1));
-        assert_eq!(num.get("four".to_string()), None);
-        assert_eq!(num.domain().collect::<Vec<_>>(), domain);
+        assert_eq!(num.index_of(domain[1].clone()), Some(1));
+        assert_eq!(num.index_of("four".to_string()), None);
+        assert_eq!(num.iter().collect::<Vec<_>>(), domain);
     }
 }
