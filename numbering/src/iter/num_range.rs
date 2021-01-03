@@ -1,8 +1,9 @@
-use num_traits::ops::checked::{CheckedAdd, CheckedSub};
-use num_traits::One;
-use std::convert::TryInto;
-use std::iter::FusedIterator;
-use std::ops::Sub;
+use std::{convert::TryInto, iter::FusedIterator, ops::Sub};
+
+use num_traits::{
+    ops::checked::{CheckedAdd, CheckedSub},
+    One,
+};
 
 /// An iterator over the half-open range [start, end).
 #[derive(Clone, Debug, Eq, PartialEq)]

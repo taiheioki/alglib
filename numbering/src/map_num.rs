@@ -1,5 +1,4 @@
-use crate::iter::MapNumIter;
-use crate::Numbering;
+use crate::{iter::MapNumIter, Numbering};
 
 /// The numbering designated by the forward map (domain -> number) and the backward map (number -> domain).
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -121,7 +120,7 @@ mod tests {
     fn ref_str() {
         let domain = vec!["zero", "one", "two", "three"];
         let forward = |s: &str| domain.iter().position(|&t| t == s);
-        let backward = |i: usize| domain.get(i).map(|&s| s);
+        let backward = |i: usize| domain.get(i).cloned();
 
         let num = MapNum::new(forward, backward);
         assert_eq!(num.len(), 4);
@@ -165,7 +164,6 @@ mod tests {
         assert_eq!(num.len(), 4);
         assert_eq!(num.get(domain[1].clone()), Some(1));
         assert_eq!(num.get("four".to_string()), None);
-
-        assert_eq!(num.domain().map(|s| s.clone()).collect::<Vec<_>>(), domain);
+        assert_eq!(num.domain().collect::<Vec<_>>(), domain);
     }
 }

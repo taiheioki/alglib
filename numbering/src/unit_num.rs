@@ -1,9 +1,13 @@
-use crate::Numbering;
-use std::option::IntoIter;
+use std::iter::{once, Once};
 
-impl Numbering for () {
+use crate::Numbering;
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+struct UnitNum {}
+
+impl Numbering for UnitNum {
     type Domain = ();
-    type DomainIter = IntoIter<()>;
+    type DomainIter = Once<()>;
 
     #[inline]
     fn get(&self, _: ()) -> Option<usize> {
@@ -12,12 +16,7 @@ impl Numbering for () {
 
     #[inline]
     fn domain(&self) -> Self::DomainIter {
-        Some(()).into_iter()
-    }
-
-    #[inline]
-    fn len(&self) -> usize {
-        1
+        once(())
     }
 
     #[inline]
@@ -32,7 +31,7 @@ mod tests {
 
     #[test]
     fn test() {
-        let num = ();
+        let num = UnitNum {};
         assert_eq!(num.get(()), Some(0));
         assert_eq!(num.domain().collect::<Vec<_>>(), vec![()]);
         assert_eq!(num.len(), 1);

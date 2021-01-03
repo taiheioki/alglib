@@ -1,8 +1,11 @@
-use crate::iter::NumRange;
-use crate::Numbering;
-use num_traits::ops::checked::{CheckedAdd, CheckedSub};
-use num_traits::{One, Zero};
 use std::convert::TryInto;
+
+use num_traits::{
+    ops::checked::{CheckedAdd, CheckedSub},
+    One, Zero,
+};
+
+use crate::{iter::NumRange, Numbering};
 
 /// The trivial numbering on the nonnegative integers given by the identity function.
 #[derive(Clone, Debug, Eq, PartialEq)]

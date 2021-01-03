@@ -1,5 +1,6 @@
-use crate::iter::NumRange;
 use std::iter::FusedIterator;
+
+use crate::iter::NumRange;
 
 /// An auxiliary iterator used in [`MapNum`](../struct.MapNum.html).
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -30,11 +31,13 @@ where
     #[inline]
     fn apply(&self, i: Option<usize>) -> Option<D> {
         i.map(|i| {
-            (self.backward)(i).expect(&format!(
-                "The `MapNum` object has length {}, but `self.backward({})` returned `None`",
-                self.range_iter.end(),
-                i
-            ))
+            (self.backward)(i).unwrap_or_else(|| {
+                panic!(
+                    "The `MapNum` object has length {}, but `self.backward({})` returned `None`",
+                    self.range_iter.end(),
+                    i
+                )
+            })
         })
     }
 }
