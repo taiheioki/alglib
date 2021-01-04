@@ -7,12 +7,14 @@ use num_traits::{
 
 /// An iterator over the half-open range [start, end).
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct RangeIter<T> {
+pub struct IntRangeIter<T> {
     start: T,
     end: T,
 }
 
-impl<T> RangeIter<T>
+/// ### Time Complexity Assumptions
+/// `T::clone` is assumed to run in `O(1)`-time.
+impl<T> IntRangeIter<T>
 where
     T: Clone,
 {
@@ -35,17 +37,19 @@ where
     }
 }
 
-impl<T> RangeIter<T>
+/// ### Time Complexity Assumptions
+/// `T::{sub, try_into}` are assumed to run in `O(1)`-time.
+impl<T> IntRangeIter<T>
 where
     T: CheckedSub + TryInto<usize>,
 {
     /// Creates a new `NumRange` from `start` (inclusive) to `end` (exclusive).
     ///
-    /// # Time Complexity
-    /// `O(1)`
-    ///
     /// # Panics
     /// Panics if `end - start` cannot be converted into `usize`.
+    ///
+    /// # Time Complexity
+    /// `O(1)`
     #[inline]
     pub fn new(start: T, end: T) -> Self {
         end.checked_sub(&start)
@@ -55,7 +59,9 @@ where
     }
 }
 
-impl<T> Iterator for RangeIter<T>
+/// ### Time Complexity Assumptions
+/// `T::{add, checked_add, checked_sub, clone, one, cmp, sub, try_into}` and `usize::try_into` are assumed to run in `O(1)`-time.
+impl<T> Iterator for IntRangeIter<T>
 where
     T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
     usize: TryInto<T>,
@@ -83,7 +89,11 @@ where
     /// `O(1)`
     #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
-        (self.len(), Some(self.len()))
+        let len = (self.end.clone() - self.start.clone())
+            .try_into()
+            .ok()
+            .unwrap();
+        (len, Some(len))
     }
 
     /// Returns the `n`th element of the iterator.
@@ -134,7 +144,9 @@ where
     }
 }
 
-impl<T> DoubleEndedIterator for RangeIter<T>
+/// ### Time Complexity Assumptions
+/// `T::{checked_sub, clone, one, cmp, sub, try_into}` and `usize::try_into` are assumed to run in `O(1)`-time.
+impl<T> DoubleEndedIterator for IntRangeIter<T>
 where
     T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
     usize: TryInto<T>,
@@ -174,25 +186,14 @@ where
     }
 }
 
-impl<T> ExactSizeIterator for RangeIter<T>
+impl<T> ExactSizeIterator for IntRangeIter<T>
 where
     T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
     usize: TryInto<T>,
 {
-    /// Returns the exact length of the iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
-    #[inline]
-    fn len(&self) -> usize {
-        (self.end.clone() - self.start.clone())
-            .try_into()
-            .ok()
-            .unwrap()
-    }
 }
 
-impl<T> FusedIterator for RangeIter<T>
+impl<T> FusedIterator for IntRangeIter<T>
 where
     T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
     usize: TryInto<T>,
@@ -205,10 +206,10 @@ mod tests {
 
     #[test]
     fn next() {
-        let mut num = RangeIter::new(0, 0u128);
+        let mut num = IntRangeIter::new(0, 0u128);
         assert_eq!(num.next(), None);
 
-        let mut num = RangeIter::new(0, 3i128);
+        let mut num = IntRangeIter::new(0, 3i128);
         assert_eq!(num.next(), Some(0));
         assert_eq!(num.next(), Some(1));
         assert_eq!(num.next(), Some(2));
@@ -218,31 +219,31 @@ mod tests {
 
     #[test]
     fn nth() {
-        let mut num = RangeIter::new(0, 3);
+        let mut num = IntRangeIter::new(0, 3);
         assert_eq!(num.nth(1), Some(1));
         assert_eq!(num.nth(1), None);
 
-        let mut num = RangeIter::new(0, std::i8::MAX);
+        let mut num = IntRangeIter::new(0, std::i8::MAX);
         assert_eq!(num.nth((i8::MAX - 1) as usize), Some(i8::MAX - 1));
         assert_eq!(num.next(), None);
 
-        let mut num = RangeIter::new(0, u8::MAX);
+        let mut num = IntRangeIter::new(0, u8::MAX);
         assert_eq!(num.nth(u8::MAX as usize), None);
 
-        let mut num = RangeIter::new(0, i16::MAX);
+        let mut num = IntRangeIter::new(0, i16::MAX);
         assert_eq!(num.nth((i16::MAX as usize) + 1), None);
         assert_eq!(num.next(), None);
 
-        let mut num = RangeIter::new(u16::MAX - 1, u16::MAX);
+        let mut num = IntRangeIter::new(u16::MAX - 1, u16::MAX);
         assert_eq!(num.nth(100), None);
     }
 
     #[test]
     fn next_back() {
-        let mut num = RangeIter::new(0, 0isize);
+        let mut num = IntRangeIter::new(0, 0isize);
         assert_eq!(num.next_back(), None);
 
-        let mut num = RangeIter::new(5u64, 10u64);
+        let mut num = IntRangeIter::new(5u64, 10u64);
         assert_eq!(num.next_back(), Some(9));
         assert_eq!(num.next(), Some(5));
         assert_eq!(num.next_back(), Some(8));
@@ -254,25 +255,25 @@ mod tests {
 
     #[test]
     fn nth_back() {
-        let mut num = RangeIter::new(2, 10i32);
+        let mut num = IntRangeIter::new(2, 10i32);
         assert_eq!(num.nth_back(1), Some(8));
         assert_eq!(num.nth_back(3), Some(4));
         assert_eq!(num.nth_back(1), Some(2));
         assert_eq!(num.nth_back(1), None);
         assert_eq!(num.next(), None);
 
-        let mut num = RangeIter::new(0, 10i8);
+        let mut num = IntRangeIter::new(0, 10i8);
         assert_eq!(num.nth_back(usize::MAX), None);
         assert_eq!(num.next(), None);
 
-        let mut num = RangeIter::new(0, 10u8);
+        let mut num = IntRangeIter::new(0, 10u8);
         assert_eq!(num.nth_back(20), None);
         assert_eq!(num.next(), None);
     }
 
     #[test]
     fn len() {
-        let mut num = RangeIter::new(10u32, 20u32);
+        let mut num = IntRangeIter::new(10u32, 20u32);
         assert_eq!(num.len(), 10);
         num.next();
         assert_eq!(num.len(), 9);
@@ -285,12 +286,12 @@ mod tests {
     #[test]
     #[should_panic]
     fn negative_length() {
-        RangeIter::new(10, 5);
+        IntRangeIter::new(10, 5);
     }
 
     #[test]
     #[should_panic]
     fn exceed_usize_range() {
-        RangeIter::new(0, u128::MAX);
+        IntRangeIter::new(0, u128::MAX);
     }
 }

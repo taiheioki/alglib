@@ -1,11 +1,11 @@
 use std::iter::FusedIterator;
 
-use crate::iter::RangeIter;
+use crate::iter::IntRangeIter;
 
 /// An auxiliary iterator used in [`MapNum`](../struct.MapNum.html).
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct MapNumIter<B> {
-    range_iter: RangeIter<usize>,
+    range_iter: IntRangeIter<usize>,
     backward: B,
 }
 
@@ -23,7 +23,7 @@ where
     #[inline]
     pub fn new(len: usize, backward: B) -> Self {
         MapNumIter {
-            range_iter: RangeIter::new(0, len),
+            range_iter: IntRangeIter::new(0, len),
             backward,
         }
     }
@@ -150,7 +150,7 @@ mod tests {
     fn range() {
         let backward = |i| Some(i).filter(|&i| i < 100);
         let mut iter = MapNumIter::new(100, backward);
-        let mut range = RangeIter::new(0, 100);
+        let mut range = IntRangeIter::new(0, 100);
         assert_eq!(iter.next(), range.next());
         assert_eq!(iter.len(), range.len());
         assert_eq!(iter.nth(97), range.nth(97));

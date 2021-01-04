@@ -1,33 +1,41 @@
 use std::iter::{once, Once};
 
-use crate::OrderedSet;
-
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct Singleton<T> {
     element: T,
 }
 
 impl<T> Singleton<T> {
+    #[inline]
     pub fn new(element: T) -> Self {
         Self { element }
     }
 }
 
-impl<T> OrderedSet for Singleton<T>
-where
-    T: Clone + Eq,
-{
-    type Element = T;
-    type Iter = Once<T>;
+impl<T> IntoIterator for Singleton<T> {
+    type Item = T;
+    type IntoIter = Once<T>;
 
     #[inline]
-    fn iter(&self) -> Self::Iter {
-        once(self.element.clone())
+    fn into_iter(self) -> Self::IntoIter {
+        once(self.element)
+    }
+}
+
+impl<'a, T> IntoIterator for &'a Singleton<T> {
+    type Item = &'a T;
+    type IntoIter = Once<&'a T>;
+
+    #[inline]
+    fn into_iter(self) -> Self::IntoIter {
+        once(&self.element)
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::OrderedSet;
+
     use super::*;
 
     #[test]

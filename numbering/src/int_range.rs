@@ -5,53 +5,57 @@ use num_traits::{
     One, Zero,
 };
 
-use crate::{iter::RangeIter, OrderedSet};
+use crate::{iter::IntRangeIter, OrderedSet};
 
-/// The set of integers between `0` and `len-1` ({0,...,len-1}`).
+/// The set of integers between `0` and `len-1`.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub struct Range<Idx> {
+pub struct IntRange<Idx> {
     len: Idx,
 }
 
-impl<Idx> Range<Idx>
+/// ### Time Complexity Assumptions
+/// `Idx::{clone, try_into}` are assumed to run in `O(1)`-time.
+impl<Idx> IntRange<Idx>
 where
     Idx: Clone + TryInto<usize>,
 {
     /// Creates a new `Range` on `{0,...,len-1}`.
     ///
-    /// # Time Complexity
-    /// `O(1)`
-    ///
     /// # Panics
     /// Panics if `len` cannot be converted into `usize`.
+    ///
+    /// # Time Complexity
+    /// `O(1)`
     #[inline]
     pub fn new(len: Idx) -> Self {
-        len.clone()
-            .try_into()
-            .ok()
-            .expect("The argument `len` cannot be converted into `usize`.");
-        Range { len }
+        assert!(
+            len.clone().try_into().is_ok(),
+            "The argument `len` cannot be converted into `usize`."
+        );
+        IntRange { len }
     }
 }
 
-impl<Idx> OrderedSet for Range<Idx>
+/// ## Time Complexity Assumptions
+/// `Idx::{clone, cmp, try_into, zero}` are assumed to run in `O(1)`-time.
+impl<Idx> OrderedSet for IntRange<Idx>
 where
     Idx: CheckedAdd + CheckedSub + Clone + One + Ord + TryInto<usize> + Zero,
     usize: TryInto<Idx>,
 {
     type Element = Idx;
-    type Iter = RangeIter<Idx>;
+    type Iterator = IntRangeIter<Idx>;
 
     /// Returns an iterator that enumerates the domain elements in the ascending order of numbering.
     ///
     /// # Time Complexity
     /// `O(1)`
     #[inline]
-    fn iter(&self) -> RangeIter<Idx> {
-        RangeIter::new(Idx::zero(), self.len.clone())
+    fn iter(&self) -> IntRangeIter<Idx> {
+        IntRangeIter::new(Idx::zero(), self.len.clone())
     }
 
-    /// Returns the numbering of the specified element, or `None` if the domain does not contain it.
+    /// Returns the index of the specified element, or `None` if the domain does not contain it.
     ///
     /// # Time Complexity
     /// `O(1)`
@@ -69,7 +73,7 @@ mod tests {
 
     #[test]
     fn test() {
-        let range = Range::new(10);
+        let range = IntRange::new(10);
         assert_eq!(range.index_of(-1), None);
         assert_eq!(range.index_of(0), Some(0));
         assert_eq!(range.index_of(3), Some(3));

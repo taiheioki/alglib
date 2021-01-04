@@ -72,14 +72,14 @@ where
     B: Fn(usize) -> Option<D> + Clone,
 {
     type Element = D;
-    type Iter = MapNumIter<B>;
+    type Iterator = MapNumIter<B>;
 
     /// Returns an iterator that enumerates the domain elements in the ascending order of numbering.
     ///
     /// # Time Complexity
     /// `O(1)`
     #[inline]
-    fn iter(&self) -> Self::Iter {
+    fn iter(&self) -> Self::Iterator {
         MapNumIter::new(self.len, self.backward.clone())
     }
 
@@ -110,7 +110,7 @@ mod tests {
     #[test]
     fn ref_str() {
         let domain = vec!["zero", "one", "two", "three"];
-        let forward = |s: &str| domain.iter().position(|&t| t == s);
+        let forward = |s: &str| domain.iter().position(|t| t == s);
         let backward = |i: usize| domain.get(i).cloned();
 
         let num = MapNum::new(forward, backward);
@@ -126,7 +126,7 @@ mod tests {
             .iter()
             .map(|s| s.to_string())
             .collect();
-        let forward = |s: &String| domain.iter().position(|t| t == s);
+        let forward = |s: &String| domain.iter().position(|t| &t == s);
         let backward = |i: usize| domain.get(i);
 
         let num = MapNum::new(forward, backward);
@@ -137,7 +137,7 @@ mod tests {
         assert_eq!(num.index_of(&four), None);
 
         assert_eq!(
-            num.iter().collect::<Vec<_>>(),
+            num.iter().cloned().collect::<Vec<_>>(),
             domain.iter().collect::<Vec<_>>()
         );
     }

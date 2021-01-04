@@ -1,41 +1,103 @@
-/// A trait for a finite set indexed from `0` to `len-1`, where `len` is the cardinality of the set.
+/// A trait for a finite set indexed from `0` to `N-1`, where `N` is the cardinality of the set.
 pub trait OrderedSet {
     /// The type of the set elements.
+    ///
+    /// # Time Complexity Assumptions
+    /// `Element::eq` is assumed to run in `O(1)`-time.
     type Element: Eq;
 
     /// The type of an iterator that enumerates the set elements in ascending order of their indices.
-    type Iter: ExactSizeIterator<Item = Self::Element>;
+    ///
+    /// # Time Complexity Assumptions
+    /// `Iterator::{len, nth}` are assumed to run in `O(1)`-time.
+    type Iterator: ExactSizeIterator<Item = Self::Element>;
 
     /// Returns an iterator that enumerates the set elements in ascending order of their indices.
-    fn iter(&self) -> Self::Iter;
+    ///
+    /// # Time Complexity Assumptions
+    /// Assumed to run in `O(1)`-time.
+    fn iter(&self) -> Self::Iterator;
 
     /// Returns the `n`th element of the iterator.
+    ///
+    /// # Time Complexity of Default Implementation
+    /// `O(1)`
     #[inline]
     fn nth(&self, n: usize) -> Option<Self::Element> {
         self.iter().nth(n)
     }
 
     /// Returns the index of the specified element, or `None` if the set does not contain it.
+    ///
+    /// # Time Complexity of Default Implementation
+    /// `O(N)`, where `N` is the cardinality of the set.
     #[inline]
     fn index_of(&self, x: Self::Element) -> Option<usize> {
         self.iter().position(|y| x == y)
     }
 
     /// Returns `true` if the set contains the specified element.
+    ///
+    /// # Time Complexity of Default Implementation
+    /// The same as the time of calling `self.index_of(x)`.
     #[inline]
     fn contains(&self, x: Self::Element) -> bool {
         self.index_of(x).is_some()
     }
 
     /// Returns the cardinality of the set.
+    ///
+    /// # Time Complexity of Default Implementation
+    /// `O(1)`
     #[inline]
     fn len(&self) -> usize {
         self.iter().len()
     }
 
     /// Returns `true` if the set is empty.
+    ///
+    /// # Time Complexity of Default Implementation
+    /// `O(1)`
     #[inline]
     fn is_empty(&self) -> bool {
         self.len() == 0
+    }
+}
+
+/// ## Time Complexity Assumptions
+/// `S::into_iter` is assumed to run in `O(1)`-time.
+impl<S> OrderedSet for S
+where
+    S: Clone + IntoIterator,
+    S::Item: Eq,
+    S::IntoIter: ExactSizeIterator,
+{
+    type Element = S::Item;
+    type Iterator = S::IntoIter;
+
+    /// Returns an iterator that enumerates the set elements in ascending order of their indices.
+    ///
+    /// # Time Complexity
+    /// The same as the time of calling `self.clone()`.
+    #[inline]
+    fn iter(&self) -> Self::Iterator {
+        self.clone().into_iter()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn vec() {
+        let vec = vec![2, 3, 5, 7, 11];
+        assert_eq!(vec.nth(0), Some(2));
+    }
+
+    #[test]
+    fn vec_ref() {
+        let vec = &&vec![2, 3, 5, 7, 11];
+        assert_eq!(vec.nth(0), Some(&2));
     }
 }
