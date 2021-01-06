@@ -1,11 +1,18 @@
 use std::iter::{once, Once};
 
+use crate::OrderedSet;
+
+/// A singleton (set of cardinality one).
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct Singleton<T> {
     element: T,
 }
 
 impl<T> Singleton<T> {
+    /// Creates a new `Singleton`.
+    ///
+    /// # Time Complexity
+    /// `O(1)`
     #[inline]
     pub fn new(element: T) -> Self {
         Self { element }
@@ -22,6 +29,19 @@ impl<T> IntoIterator for Singleton<T> {
     }
 }
 
+impl<T> OrderedSet for Singleton<T>
+where
+    T: Clone + Eq,
+{
+    type Element = T;
+    type Iterator = Once<T>;
+
+    #[inline]
+    fn iter(&self) -> Self::Iterator {
+        once(self.element.clone())
+    }
+}
+
 impl<'a, T> IntoIterator for &'a Singleton<T> {
     type Item = &'a T;
     type IntoIter = Once<&'a T>;
@@ -32,10 +52,18 @@ impl<'a, T> IntoIterator for &'a Singleton<T> {
     }
 }
 
+impl<'a, T: Eq> OrderedSet for &'a Singleton<T> {
+    type Element = &'a T;
+    type Iterator = Once<&'a T>;
+
+    #[inline]
+    fn iter(&self) -> Self::Iterator {
+        once(&self.element)
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::OrderedSet;
-
     use super::*;
 
     #[test]

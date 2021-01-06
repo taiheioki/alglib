@@ -12,8 +12,6 @@ pub struct IntRangeIter<T> {
     end: T,
 }
 
-/// ### Time Complexity Assumptions
-/// `T::clone` is assumed to run in `O(1)`-time.
 impl<T> IntRangeIter<T>
 where
     T: Clone,
@@ -37,8 +35,6 @@ where
     }
 }
 
-/// ### Time Complexity Assumptions
-/// `T::{sub, try_into}` are assumed to run in `O(1)`-time.
 impl<T> IntRangeIter<T>
 where
     T: CheckedSub + TryInto<usize>,
@@ -59,8 +55,6 @@ where
     }
 }
 
-/// ### Time Complexity Assumptions
-/// `T::{add, checked_add, checked_sub, clone, one, cmp, sub, try_into}` and `usize::try_into` are assumed to run in `O(1)`-time.
 impl<T> Iterator for IntRangeIter<T>
 where
     T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
@@ -144,8 +138,6 @@ where
     }
 }
 
-/// ### Time Complexity Assumptions
-/// `T::{checked_sub, clone, one, cmp, sub, try_into}` and `usize::try_into` are assumed to run in `O(1)`-time.
 impl<T> DoubleEndedIterator for IntRangeIter<T>
 where
     T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,

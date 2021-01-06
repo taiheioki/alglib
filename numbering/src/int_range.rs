@@ -13,8 +13,6 @@ pub struct IntRange<Idx> {
     len: Idx,
 }
 
-/// ### Time Complexity Assumptions
-/// `Idx::{clone, try_into}` are assumed to run in `O(1)`-time.
 impl<Idx> IntRange<Idx>
 where
     Idx: Clone + TryInto<usize>,
@@ -36,8 +34,6 @@ where
     }
 }
 
-/// ## Time Complexity Assumptions
-/// `Idx::{clone, cmp, try_into, zero}` are assumed to run in `O(1)`-time.
 impl<Idx> OrderedSet for IntRange<Idx>
 where
     Idx: CheckedAdd + CheckedSub + Clone + One + Ord + TryInto<usize> + Zero,
