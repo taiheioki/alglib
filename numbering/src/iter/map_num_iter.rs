@@ -2,7 +2,7 @@ use std::iter::FusedIterator;
 
 use crate::iter::IntRangeIter;
 
-/// An auxiliary iterator used in [`MapNum`](../struct.MapNum.html).
+/// An auxiliary iterator used in [`MapSet`](crate::MapSet).
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct MapNumIter<B> {
     range_iter: IntRangeIter<usize>,
@@ -45,27 +45,23 @@ where
 {
     type Item = D;
 
-    /// Advances the iterator and returns the next value.
     #[inline]
     fn next(&mut self) -> Option<D> {
         let i = self.range_iter.next();
         self.apply(i)
     }
 
-    /// Returns the exact bounds on the remaining length of the iterator.
     #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.range_iter.size_hint()
     }
 
-    /// Returns the `n`th element of the iterator.
     #[inline]
     fn nth(&mut self, n: usize) -> Option<D> {
         let i = self.range_iter.nth(n);
         self.apply(i)
     }
 
-    /// Consumes the iterator, returning the last element.
     #[inline]
     fn last(mut self) -> Option<D> {
         self.next_back()
@@ -76,14 +72,12 @@ impl<D, B> DoubleEndedIterator for MapNumIter<B>
 where
     B: Fn(usize) -> Option<D>,
 {
-    /// Removes and returns an element from the end of the iterator.
     #[inline]
     fn next_back(&mut self) -> Option<D> {
         let i = self.range_iter.next_back();
         self.apply(i)
     }
 
-    /// Returns the `n`th element from the end of the iterator.
     #[inline]
     fn nth_back(&mut self, n: usize) -> Option<D> {
         let i = self.range_iter.nth_back(n);
@@ -95,7 +89,6 @@ impl<D, B> ExactSizeIterator for MapNumIter<B>
 where
     B: Fn(usize) -> Option<D>,
 {
-    /// Returns the exact length of the iterator.
     #[inline]
     fn len(&self) -> usize {
         self.range_iter.len()

@@ -53,7 +53,6 @@ where
 {
     type Item = T;
 
-    /// Advances the iterator and returns the next value.
     #[inline]
     fn next(&mut self) -> Option<T> {
         if self.start < self.end {
@@ -65,7 +64,6 @@ where
         }
     }
 
-    /// Returns the exact bounds on the remaining length of the iterator.
     #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         let len = (self.end.clone() - self.start.clone())
@@ -75,7 +73,6 @@ where
         (len, Some(len))
     }
 
-    /// Returns the `n`th element of the iterator.
     #[inline]
     fn nth(&mut self, n: usize) -> Option<T> {
         if let Some(s) = n
@@ -92,19 +89,16 @@ where
         }
     }
 
-    /// Consumes the iterator, returning the last element.
     #[inline]
     fn last(mut self) -> Option<T> {
         self.next_back()
     }
 
-    /// Returns the minimum element of an iterator.
     #[inline]
     fn min(mut self) -> Option<T> {
         self.next()
     }
 
-    /// Returns the maximum element of an iterator.
     #[inline]
     fn max(mut self) -> Option<T> {
         self.next_back()
@@ -116,7 +110,6 @@ where
     T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
     usize: TryInto<T>,
 {
-    /// Removes and returns an element from the end of the iterator.
     #[inline]
     fn next_back(&mut self) -> Option<T> {
         if self.start < self.end {
@@ -127,7 +120,6 @@ where
         }
     }
 
-    /// Returns the `n`th element from the end of the iterator.
     #[inline]
     fn nth_back(&mut self, n: usize) -> Option<T> {
         if let Some(e) = n

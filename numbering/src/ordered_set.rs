@@ -50,7 +50,6 @@ where
     type Element = &'a T;
     type Iterator = Iter<'a, T>;
 
-    /// Returns an iterator that enumerates the set elements in ascending order of their indices.
     #[inline]
     fn iter(&self) -> Self::Iterator {
         self.clone().into_iter()

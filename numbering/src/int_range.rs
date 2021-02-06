@@ -39,13 +39,11 @@ where
     type Element = Idx;
     type Iterator = IntRangeIter<Idx>;
 
-    /// Returns an iterator that enumerates the domain elements in the ascending order of numbering.
     #[inline]
     fn iter(&self) -> IntRangeIter<Idx> {
         IntRangeIter::new(Idx::zero(), self.len.clone())
     }
 
-    /// Returns the index of the specified element, or `None` if the domain does not contain it.
     #[inline]
     fn index_of(&self, x: Idx) -> Option<usize> {
         Some(x)

@@ -39,7 +39,7 @@ where
     /// Creates a new `MapSet` with the cardinality of the domain besides forward and backward maps.
     ///
     /// # Requirements
-    /// In addition to the requirements in [new](struct.MapSet.html#method.new), the arguments must satisfy the following:
+    /// In addition to the requirements in [new](Self::new), the arguments must satisfy the following:
     /// `forward_lookup(n)` is non-none if and only if `n < len` for all `n: usize`.
     #[inline]
     pub fn with_len(len: usize, forward_lookup: F, reverse_lookup: R) -> Self {
@@ -75,13 +75,11 @@ where
     type Element = E;
     type Iterator = MapNumIter<F>;
 
-    /// Returns an iterator that enumerates the set elements in ascending order of their indices.
     #[inline]
     fn iter(&self) -> Self::Iterator {
         MapNumIter::new(self.len, self.forward_lookup.clone())
     }
 
-    /// Returns the index of the specified element, or `None` if the set does not contain it.
     #[inline]
     fn index_of(&self, x: E) -> Option<usize> {
         (self.reverse_lookup)(x)
