@@ -10,9 +10,6 @@ pub struct Singleton<T> {
 
 impl<T> Singleton<T> {
     /// Creates a new `Singleton`.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     pub fn new(element: T) -> Self {
         Self { element }

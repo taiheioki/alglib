@@ -12,45 +12,30 @@ pub trait OrderedSet {
     fn iter(&self) -> Self::Iterator;
 
     /// Returns the `n`th element of the iterator.
-    ///
-    /// # Time Complexity of Default Implementation
-    /// `O(1)`
     #[inline]
     fn nth(&self, n: usize) -> Option<Self::Element> {
         self.iter().nth(n)
     }
 
     /// Returns the index of the specified element, or `None` if the set does not contain it.
-    ///
-    /// # Time Complexity of Default Implementation
-    /// `O(N)`, where `N` is the cardinality of the set.
     #[inline]
     fn index_of(&self, x: Self::Element) -> Option<usize> {
         self.iter().position(|y| x == y)
     }
 
     /// Returns `true` if the set contains the specified element.
-    ///
-    /// # Time Complexity of Default Implementation
-    /// The same as `self.index_of(x)`.
     #[inline]
     fn contains(&self, x: Self::Element) -> bool {
         self.index_of(x).is_some()
     }
 
     /// Returns the cardinality of the set.
-    ///
-    /// # Time Complexity of Default Implementation
-    /// `O(1)`
     #[inline]
     fn len(&self) -> usize {
         self.iter().len()
     }
 
     /// Returns `true` if the set is empty.
-    ///
-    /// # Time Complexity of Default Implementation
-    /// `O(1)`
     #[inline]
     fn is_empty(&self) -> bool {
         self.len() == 0
@@ -66,9 +51,6 @@ where
     type Iterator = Iter<'a, T>;
 
     /// Returns an iterator that enumerates the set elements in ascending order of their indices.
-    ///
-    /// # Time Complexity
-    /// O(1)
     #[inline]
     fn iter(&self) -> Self::Iterator {
         self.clone().into_iter()

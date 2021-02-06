@@ -17,9 +17,6 @@ where
     ///
     /// # Requirements
     /// `backward(n)` must be non-none for all `n < len`.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     pub fn new(len: usize, backward: B) -> Self {
         MapNumIter {
@@ -49,9 +46,6 @@ where
     type Item = D;
 
     /// Advances the iterator and returns the next value.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn next(&mut self) -> Option<D> {
         let i = self.range_iter.next();
@@ -59,18 +53,12 @@ where
     }
 
     /// Returns the exact bounds on the remaining length of the iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.range_iter.size_hint()
     }
 
     /// Returns the `n`th element of the iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn nth(&mut self, n: usize) -> Option<D> {
         let i = self.range_iter.nth(n);
@@ -78,9 +66,6 @@ where
     }
 
     /// Consumes the iterator, returning the last element.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn last(mut self) -> Option<D> {
         self.next_back()
@@ -92,9 +77,6 @@ where
     B: Fn(usize) -> Option<D>,
 {
     /// Removes and returns an element from the end of the iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn next_back(&mut self) -> Option<D> {
         let i = self.range_iter.next_back();
@@ -102,9 +84,6 @@ where
     }
 
     /// Returns the `n`th element from the end of the iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn nth_back(&mut self, n: usize) -> Option<D> {
         let i = self.range_iter.nth_back(n);
@@ -117,9 +96,6 @@ where
     B: Fn(usize) -> Option<D>,
 {
     /// Returns the exact length of the iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn len(&self) -> usize {
         self.range_iter.len()

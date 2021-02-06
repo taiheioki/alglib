@@ -23,9 +23,6 @@ where
     /// * if `forward_lookup(n).is_some()`, then `reverse_lookup(forward_lookup(n).unwrap()) == Some(n)` for all `n: usize`.
     /// * if `reverse_lookup(x).is_some()`, then `forward_lookup(reverse_lookup(x).unwrap()) == Some(x)` for all `x: E`.
     ///
-    /// # Time Complexity
-    /// `O(n)`, where `n` is the cardinality of the domain.
-    ///
     /// # Panics
     /// Panics if `forward_lookup(n)` doesn't return `None` for any `n: usize`.
     #[inline]
@@ -33,7 +30,7 @@ where
         Self::with_len(
             (0..=usize::MAX)
                 .find(|&n| forward_lookup(n).is_none())
-                .expect("`forward_lookup(n)` doesn't returns `None` for any `n: usize`"),
+                .expect("`forward_lookup(n)` doesn't return `None` for any `n: usize`"),
             forward_lookup,
             reverse_lookup,
         )
@@ -44,9 +41,6 @@ where
     /// # Requirements
     /// In addition to the requirements in [new](struct.MapSet.html#method.new), the arguments must satisfy the following:
     /// `forward_lookup(n)` is non-none if and only if `n < len` for all `n: usize`.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     pub fn with_len(len: usize, forward_lookup: F, reverse_lookup: R) -> Self {
         debug_assert!(forward_lookup(len).is_none());
@@ -82,18 +76,12 @@ where
     type Iterator = MapNumIter<F>;
 
     /// Returns an iterator that enumerates the set elements in ascending order of their indices.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn iter(&self) -> Self::Iterator {
         MapNumIter::new(self.len, self.forward_lookup.clone())
     }
 
     /// Returns the index of the specified element, or `None` if the set does not contain it.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn index_of(&self, x: E) -> Option<usize> {
         (self.reverse_lookup)(x)

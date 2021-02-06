@@ -17,18 +17,12 @@ where
     T: Clone,
 {
     /// Returns the left endpoint of the range (inclusive).
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     pub fn start(&self) -> T {
         self.start.clone()
     }
 
     /// Returns the right endpoint of the range (exclusive).
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     pub fn end(&self) -> T {
         self.end.clone()
@@ -43,9 +37,6 @@ where
     ///
     /// # Panics
     /// Panics if `end - start` cannot be converted into `usize`.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     pub fn new(start: T, end: T) -> Self {
         end.checked_sub(&start)
@@ -63,9 +54,6 @@ where
     type Item = T;
 
     /// Advances the iterator and returns the next value.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn next(&mut self) -> Option<T> {
         if self.start < self.end {
@@ -78,9 +66,6 @@ where
     }
 
     /// Returns the exact bounds on the remaining length of the iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         let len = (self.end.clone() - self.start.clone())
@@ -91,9 +76,6 @@ where
     }
 
     /// Returns the `n`th element of the iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn nth(&mut self, n: usize) -> Option<T> {
         if let Some(s) = n
@@ -111,27 +93,18 @@ where
     }
 
     /// Consumes the iterator, returning the last element.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn last(mut self) -> Option<T> {
         self.next_back()
     }
 
     /// Returns the minimum element of an iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn min(mut self) -> Option<T> {
         self.next()
     }
 
     /// Returns the maximum element of an iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn max(mut self) -> Option<T> {
         self.next_back()
@@ -144,9 +117,6 @@ where
     usize: TryInto<T>,
 {
     /// Removes and returns an element from the end of the iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn next_back(&mut self) -> Option<T> {
         if self.start < self.end {
@@ -158,9 +128,6 @@ where
     }
 
     /// Returns the `n`th element from the end of the iterator.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn nth_back(&mut self, n: usize) -> Option<T> {
         if let Some(e) = n

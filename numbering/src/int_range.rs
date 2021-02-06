@@ -21,9 +21,6 @@ where
     ///
     /// # Panics
     /// Panics if `len` cannot be converted into `usize`.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     pub fn new(len: Idx) -> Self {
         assert!(
@@ -43,18 +40,12 @@ where
     type Iterator = IntRangeIter<Idx>;
 
     /// Returns an iterator that enumerates the domain elements in the ascending order of numbering.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn iter(&self) -> IntRangeIter<Idx> {
         IntRangeIter::new(Idx::zero(), self.len.clone())
     }
 
     /// Returns the index of the specified element, or `None` if the domain does not contain it.
-    ///
-    /// # Time Complexity
-    /// `O(1)`
     #[inline]
     fn index_of(&self, x: Idx) -> Option<usize> {
         Some(x)
