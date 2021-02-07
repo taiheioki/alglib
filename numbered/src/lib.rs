@@ -10,4 +10,7 @@ pub use self::mapped_set::*;
 mod singleton;
 pub use self::singleton::*;
 
+mod map;
+pub use self::map::*;
+
 pub mod iter;

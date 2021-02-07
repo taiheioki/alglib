@@ -62,13 +62,13 @@ mod tests {
 
     #[test]
     fn array() {
-        let vec = &[2, 3, 5, 7, 11];
-        assert_eq!(vec.nth(0), Some(&2));
+        let set = &[2, 3, 5, 7, 11];
+        assert_eq!(set.nth(0), Some(&2));
     }
 
     #[test]
     fn vec_ref() {
-        let vec = &vec![2, 3, 5, 7, 11];
-        assert_eq!(vec.nth(0), Some(&2));
+        let set = &vec![2, 3, 5, 7, 11];
+        assert_eq!(set.nth(0), Some(&2));
     }
 }
