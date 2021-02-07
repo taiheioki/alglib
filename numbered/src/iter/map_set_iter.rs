@@ -13,7 +13,7 @@ impl<D, B> MapSetIter<B>
 where
     B: Fn(usize) -> Option<D>,
 {
-    /// Creates a new `MapNumIter`. The returned iterator is equivalent to `NumRange::new(0, len).map(|i| backward(i).unwrap())`.
+    /// Creates a new [`MapSetIter`]. The returned iterator is equivalent to `NumRange::new(0, len).map(|i| backward(i).unwrap())`.
     ///
     /// # Requirements
     /// `backward(n)` must be non-none for all `n < len`.

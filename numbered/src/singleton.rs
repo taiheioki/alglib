@@ -9,7 +9,7 @@ pub struct Singleton<T> {
 }
 
 impl<T> Singleton<T> {
-    /// Creates a new `Singleton`.
+    /// Creates a new [`Singleton`].
     #[inline]
     pub fn new(element: T) -> Self {
         Self { element }
@@ -75,10 +75,16 @@ mod tests {
         assert_eq!(singleton.contains('a'), true);
     }
 
+    fn check_first<N: Numbered>(numbered: &N, x: <N as Numbered>::Element) {
+        assert_eq!(numbered.index_of(x), Some(0));
+    }
+
     #[test]
     fn singleton_ref() {
         let singleton = Singleton::new(1usize);
-        assert_eq!(singleton.index_of(1usize), Some(0));
-        assert_eq!((&&singleton).index_of(&1usize), Some(0));
+        check_first(&singleton, 1usize);
+
+        let singleton_ref = &singleton;
+        check_first(&singleton_ref, &1usize);
     }
 }

@@ -17,7 +17,7 @@ impl<Idx> IntRange<Idx>
 where
     Idx: Clone + TryInto<usize>,
 {
-    /// Creates a new `Range` on `{0,...,len-1}`.
+    /// Creates a new [`IntRange`] on `{0,...,len-1}`.
     ///
     /// # Panics
     /// Panics if `len` cannot be converted into `usize`.

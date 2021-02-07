@@ -14,7 +14,7 @@ where
     F: Fn(usize) -> Option<E>,
     R: Fn(E) -> Option<usize>,
 {
-    /// Creates a new `MapSet` with forward and reverse lookup maps.
+    /// Creates a new [`MapSet`] with forward and reverse lookup maps.
     /// The cardinality of the domain is determined as the first `n` such that `forward_lookup(n)` is `None`.
     ///
     /// # Requirements
@@ -36,10 +36,10 @@ where
         )
     }
 
-    /// Creates a new `MapSet` with the cardinality of the domain besides forward and backward maps.
+    /// Creates a new [`MapSet`] with the cardinality of the domain besides forward and backward maps.
     ///
     /// # Requirements
-    /// In addition to the requirements in [new](Self::new), the arguments must satisfy the following:
+    /// In addition to the requirements in [`new`](Self::new), the arguments must satisfy the following:
     /// `forward_lookup(n)` is non-none if and only if `n < len` for all `n: usize`.
     #[inline]
     pub fn with_len(len: usize, forward_lookup: F, reverse_lookup: R) -> Self {
