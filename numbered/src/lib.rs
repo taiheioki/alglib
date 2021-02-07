@@ -13,4 +13,7 @@ pub use self::singleton::*;
 mod map;
 pub use self::map::*;
 
+mod vec_map;
+pub use self::vec_map::*;
+
 pub mod iter;

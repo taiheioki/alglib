@@ -1,5 +1,3 @@
-use std::slice::Iter;
-
 /// A trait for a finite set indexed from `0` to `N-1`, where `N` is the cardinality of the set.
 pub trait Set {
     /// The type of the set elements.
@@ -42,17 +40,53 @@ pub trait Set {
     }
 }
 
-impl<'a, S, T> Set for S
+impl<'a, E> Set for &'a [E]
 where
-    S: Clone + IntoIterator<IntoIter = Iter<'a, T>>,
-    T: Eq + 'a,
+    E: Eq + 'a,
 {
-    type Element = &'a T;
-    type Iterator = Iter<'a, T>;
+    type Element = &'a E;
+    type Iterator = std::slice::Iter<'a, E>;
 
     #[inline]
     fn iter(&self) -> Self::Iterator {
+        <[_]>::iter(self)
+    }
+}
+
+impl<'a, E> Set for &'a Vec<E>
+where
+    E: Eq + 'a,
+{
+    type Element = &'a E;
+    type Iterator = std::slice::Iter<'a, E>;
+
+    #[inline]
+    fn iter(&self) -> Self::Iterator {
+        <[_]>::iter(self)
+    }
+}
+
+impl<E> Set for Option<E>
+where
+    E: Clone + Eq,
+{
+    type Element = E;
+    type Iterator = std::option::IntoIter<E>;
+
+    fn iter(&self) -> Self::Iterator {
         self.clone().into_iter()
+    }
+}
+
+impl<'a, E> Set for &'a Option<E>
+where
+    E: Eq + 'a,
+{
+    type Element = &'a E;
+    type Iterator = std::option::Iter<'a, E>;
+
+    fn iter(&self) -> Self::Iterator {
+        Option::iter(self)
     }
 }
 
@@ -61,8 +95,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn array() {
-        let set = &[2, 3, 5, 7, 11];
+    fn slice_ref() {
+        let set: &[i32] = &[2, 3, 5, 7, 11];
         assert_eq!(set.nth(0), Some(&2));
     }
 
@@ -70,5 +104,17 @@ mod tests {
     fn vec_ref() {
         let set = &vec![2, 3, 5, 7, 11];
         assert_eq!(set.nth(0), Some(&2));
+    }
+
+    #[test]
+    fn option() {
+        let set = Some('a');
+        assert_eq!(set.nth(0), Some('a'));
+    }
+
+    #[test]
+    fn option_ref() {
+        let set = &Some('a');
+        assert_eq!((&set).nth(0), Some(&'a'));
     }
 }

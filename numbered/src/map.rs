@@ -3,9 +3,9 @@ use std::ops::Index;
 use crate::{IntRange, Set};
 
 pub trait Map: Index<<Self as Map>::Input, Output = <Self as Map>::Output> {
-    type Input: Eq + std::fmt::Debug;
-    type Output;
     type Domain: Set<Element = Self::Input>;
+    type Input: Eq;
+    type Output;
 
     fn domain(&self) -> Self::Domain;
 
@@ -18,9 +18,9 @@ pub trait Map: Index<<Self as Map>::Input, Output = <Self as Map>::Output> {
 }
 
 impl<T> Map for [T] {
+    type Domain = IntRange;
     type Input = usize;
     type Output = T;
-    type Domain = IntRange;
 
     #[inline]
     fn domain(&self) -> IntRange {
@@ -29,7 +29,7 @@ impl<T> Map for [T] {
 
     #[inline]
     fn get_by_index(&self, index: usize) -> Option<&T> {
-        <[_]>::get(self, index)
+        Self::get(self, index)
     }
 }
 
