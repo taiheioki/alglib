@@ -1,20 +1,20 @@
-use crate::{iter::MapSetIter, Numbered};
+use crate::{iter::MappedSetIter, Set};
 
 /// The ordered set designated by a forward lookup map (index -> element) and the reverse lookup map (element -> index).
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct MapSet<F, R> {
+pub struct MappedSet<F, R> {
     len: usize,
     forward_lookup: F,
     reverse_lookup: R,
 }
 
-impl<E, F, R> MapSet<F, R>
+impl<E, F, R> MappedSet<F, R>
 where
     E: Eq,
     F: Fn(usize) -> Option<E>,
     R: Fn(E) -> Option<usize>,
 {
-    /// Creates a new [`MapSet`] with forward and reverse lookup maps.
+    /// Creates a new [`MappedSet`] with forward and reverse lookup maps.
     /// The cardinality of the domain is determined as the first `n` such that `forward_lookup(n)` is `None`.
     ///
     /// # Requirements
@@ -36,7 +36,7 @@ where
         )
     }
 
-    /// Creates a new [`MapSet`] with the cardinality of the domain besides forward and backward maps.
+    /// Creates a new [`MappedSet`] with the cardinality of the domain besides forward and backward maps.
     ///
     /// # Requirements
     /// In addition to the requirements in [`new`](Self::new), the arguments must satisfy the following:
@@ -44,7 +44,7 @@ where
     #[inline]
     pub fn with_len(len: usize, forward_lookup: F, reverse_lookup: R) -> Self {
         debug_assert!(forward_lookup(len).is_none());
-        MapSet {
+        MappedSet {
             len,
             forward_lookup,
             reverse_lookup,
@@ -52,33 +52,33 @@ where
     }
 }
 
-impl<E, F, R> IntoIterator for MapSet<F, R>
+impl<E, F, R> IntoIterator for MappedSet<F, R>
 where
     E: Eq,
     F: Fn(usize) -> Option<E>,
     R: Fn(E) -> Option<usize>,
 {
     type Item = E;
-    type IntoIter = MapSetIter<F>;
+    type IntoIter = MappedSetIter<F>;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
-        MapSetIter::new(self.len, self.forward_lookup)
+        MappedSetIter::new(self.len, self.forward_lookup)
     }
 }
 
-impl<E, F, R> Numbered for MapSet<F, R>
+impl<E, F, R> Set for MappedSet<F, R>
 where
     E: Eq,
     F: Fn(usize) -> Option<E> + Clone,
     R: Fn(E) -> Option<usize>,
 {
     type Element = E;
-    type Iterator = MapSetIter<F>;
+    type Iterator = MappedSetIter<F>;
 
     #[inline]
     fn iter(&self) -> Self::Iterator {
-        MapSetIter::new(self.len, self.forward_lookup.clone())
+        MappedSetIter::new(self.len, self.forward_lookup.clone())
     }
 
     #[inline]
@@ -95,7 +95,7 @@ mod tests {
     fn unit() {
         let forward = |i: usize| Some(i).filter(|&i| i == 0).and(Some(()));
         let reverse = |()| Some(0);
-        let set = MapSet::new(forward, reverse);
+        let set = MappedSet::new(forward, reverse);
         assert_eq!(set.len(), 1);
         assert_eq!(set.index_of(()), Some(0));
         assert_eq!(set.iter().collect::<Vec<_>>(), vec![()]);
@@ -107,7 +107,7 @@ mod tests {
         let forward = |i: usize| domain.get(i).cloned();
         let reverse = |s: &str| domain.iter().position(|t| *t == s);
 
-        let set = MapSet::new(forward, reverse);
+        let set = MappedSet::new(forward, reverse);
         assert_eq!(set.len(), 4);
         assert_eq!(set.index_of("two"), Some(2));
         assert_eq!(set.index_of("four"), None);
@@ -123,7 +123,7 @@ mod tests {
         let forward = |i: usize| domain.get(i);
         let reverse = |s: &String| domain.iter().position(|t| t == s);
 
-        let set = MapSet::new(forward, reverse);
+        let set = MappedSet::new(forward, reverse);
         assert_eq!(set.len(), 4);
         assert_eq!(set.index_of(&domain[1]), Some(1));
 
@@ -145,7 +145,7 @@ mod tests {
         let forward = |i: usize| domain.get(i).map(|s| (*s).clone());
         let reverse = |s: String| domain.iter().position(|t| *t == s);
 
-        let set = MapSet::new(forward, reverse);
+        let set = MappedSet::new(forward, reverse);
         assert_eq!(set.len(), 4);
         assert_eq!(set.index_of(domain[1].clone()), Some(1));
         assert_eq!(set.index_of("four".to_string()), None);

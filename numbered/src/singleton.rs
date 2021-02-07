@@ -1,24 +1,24 @@
 use std::iter::{once, Once};
 
-use crate::Numbered;
+use crate::Set;
 
 /// A singleton (set of cardinality one).
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub struct Singleton<T> {
-    element: T,
+pub struct Singleton<E> {
+    element: E,
 }
 
-impl<T> Singleton<T> {
+impl<E> Singleton<E> {
     /// Creates a new [`Singleton`].
     #[inline]
-    pub fn new(element: T) -> Self {
+    pub fn new(element: E) -> Self {
         Self { element }
     }
 }
 
-impl<T> IntoIterator for Singleton<T> {
-    type Item = T;
-    type IntoIter = Once<T>;
+impl<E> IntoIterator for Singleton<E> {
+    type Item = E;
+    type IntoIter = Once<E>;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
@@ -26,12 +26,12 @@ impl<T> IntoIterator for Singleton<T> {
     }
 }
 
-impl<T> Numbered for Singleton<T>
+impl<E> Set for Singleton<E>
 where
-    T: Clone + Eq,
+    E: Clone + Eq,
 {
-    type Element = T;
-    type Iterator = Once<T>;
+    type Element = E;
+    type Iterator = Once<E>;
 
     #[inline]
     fn iter(&self) -> Self::Iterator {
@@ -39,9 +39,9 @@ where
     }
 }
 
-impl<'a, T> IntoIterator for &'a Singleton<T> {
-    type Item = &'a T;
-    type IntoIter = Once<&'a T>;
+impl<'a, E> IntoIterator for &'a Singleton<E> {
+    type Item = &'a E;
+    type IntoIter = Once<&'a E>;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
@@ -49,9 +49,12 @@ impl<'a, T> IntoIterator for &'a Singleton<T> {
     }
 }
 
-impl<'a, T: Eq> Numbered for &'a Singleton<T> {
-    type Element = &'a T;
-    type Iterator = Once<&'a T>;
+impl<'a, E> Set for &'a Singleton<E>
+where
+    E: Eq,
+{
+    type Element = &'a E;
+    type Iterator = Once<&'a E>;
 
     #[inline]
     fn iter(&self) -> Self::Iterator {
@@ -75,8 +78,8 @@ mod tests {
         assert_eq!(singleton.contains('a'), true);
     }
 
-    fn check_first<N: Numbered>(numbered: &N, x: <N as Numbered>::Element) {
-        assert_eq!(numbered.index_of(x), Some(0));
+    fn check_first<S: Set>(set: &S, x: S::Element) {
+        assert_eq!(set.index_of(x), Some(0));
     }
 
     #[test]

@@ -1,7 +1,7 @@
 use std::slice::Iter;
 
 /// A trait for a finite set indexed from `0` to `N-1`, where `N` is the cardinality of the set.
-pub trait Numbered {
+pub trait Set {
     /// The type of the set elements.
     type Element: Eq;
 
@@ -42,7 +42,7 @@ pub trait Numbered {
     }
 }
 
-impl<'a, S, T> Numbered for S
+impl<'a, S, T> Set for S
 where
     S: Clone + IntoIterator<IntoIter = Iter<'a, T>>,
     T: Eq + 'a,
