@@ -64,7 +64,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test() {
+    fn singleton() {
         let singleton = Singleton::new('a');
         assert_eq!(singleton.index_of('a'), Some(0));
         assert_eq!(singleton.index_of('b'), None);
@@ -73,5 +73,12 @@ mod tests {
         assert_eq!(singleton.iter().collect::<Vec<_>>(), vec!['a']);
         assert_eq!(singleton.len(), 1);
         assert_eq!(singleton.contains('a'), true);
+    }
+
+    #[test]
+    fn singleton_ref() {
+        let singleton = Singleton::new(1usize);
+        assert_eq!(singleton.index_of(1usize), Some(0));
+        assert_eq!((&&singleton).index_of(&1usize), Some(0));
     }
 }

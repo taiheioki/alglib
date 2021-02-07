@@ -1,4 +1,4 @@
-use crate::{iter::MapNumIter, OrderedSet};
+use crate::{iter::MapSetIter, OrderedSet};
 
 /// The ordered set designated by a forward lookup map (index -> element) and the reverse lookup map (element -> index).
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -59,10 +59,10 @@ where
     R: Fn(E) -> Option<usize>,
 {
     type Item = E;
-    type IntoIter = MapNumIter<F>;
+    type IntoIter = MapSetIter<F>;
 
     fn into_iter(self) -> Self::IntoIter {
-        MapNumIter::new(self.len, self.forward_lookup)
+        MapSetIter::new(self.len, self.forward_lookup)
     }
 }
 
@@ -73,11 +73,11 @@ where
     R: Fn(E) -> Option<usize>,
 {
     type Element = E;
-    type Iterator = MapNumIter<F>;
+    type Iterator = MapSetIter<F>;
 
     #[inline]
     fn iter(&self) -> Self::Iterator {
-        MapNumIter::new(self.len, self.forward_lookup.clone())
+        MapSetIter::new(self.len, self.forward_lookup.clone())
     }
 
     #[inline]

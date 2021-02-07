@@ -4,12 +4,12 @@ use crate::iter::IntRangeIter;
 
 /// An auxiliary iterator used in [`MapSet`](crate::MapSet).
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct MapNumIter<B> {
+pub struct MapSetIter<B> {
     range_iter: IntRangeIter<usize>,
     backward: B,
 }
 
-impl<D, B> MapNumIter<B>
+impl<D, B> MapSetIter<B>
 where
     B: Fn(usize) -> Option<D>,
 {
@@ -19,7 +19,7 @@ where
     /// `backward(n)` must be non-none for all `n < len`.
     #[inline]
     pub fn new(len: usize, backward: B) -> Self {
-        MapNumIter {
+        MapSetIter {
             range_iter: IntRangeIter::new(0, len),
             backward,
         }
@@ -39,7 +39,7 @@ where
     }
 }
 
-impl<D, B> Iterator for MapNumIter<B>
+impl<D, B> Iterator for MapSetIter<B>
 where
     B: Fn(usize) -> Option<D>,
 {
@@ -68,7 +68,7 @@ where
     }
 }
 
-impl<D, B> DoubleEndedIterator for MapNumIter<B>
+impl<D, B> DoubleEndedIterator for MapSetIter<B>
 where
     B: Fn(usize) -> Option<D>,
 {
@@ -85,7 +85,7 @@ where
     }
 }
 
-impl<D, B> ExactSizeIterator for MapNumIter<B>
+impl<D, B> ExactSizeIterator for MapSetIter<B>
 where
     B: Fn(usize) -> Option<D>,
 {
@@ -95,7 +95,7 @@ where
     }
 }
 
-impl<T, B> FusedIterator for MapNumIter<B> where B: Fn(usize) -> Option<T> {}
+impl<T, B> FusedIterator for MapSetIter<B> where B: Fn(usize) -> Option<T> {}
 
 #[cfg(test)]
 mod tests {
@@ -104,7 +104,7 @@ mod tests {
     #[test]
     fn grid_2d() {
         let backward = |i| Some(i).filter(|&i| i < 9).map(|i| (i / 3, i % 3));
-        let mut iter = MapNumIter::new(9, backward);
+        let mut iter = MapSetIter::new(9, backward);
         assert_eq!(iter.next(), Some((0, 0)));
         assert_eq!(iter.next(), Some((0, 1)));
         assert_eq!(iter.len(), 7);
@@ -118,7 +118,7 @@ mod tests {
     #[test]
     fn range() {
         let backward = |i| Some(i).filter(|&i| i < 100);
-        let mut iter = MapNumIter::new(100, backward);
+        let mut iter = MapSetIter::new(100, backward);
         let mut range = IntRangeIter::new(0, 100);
         assert_eq!(iter.next(), range.next());
         assert_eq!(iter.len(), range.len());
