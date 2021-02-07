@@ -1,6 +1,6 @@
 use std::iter::{once, Once};
 
-use crate::OrderedSet;
+use crate::Numbered;
 
 /// A singleton (set of cardinality one).
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -26,7 +26,7 @@ impl<T> IntoIterator for Singleton<T> {
     }
 }
 
-impl<T> OrderedSet for Singleton<T>
+impl<T> Numbered for Singleton<T>
 where
     T: Clone + Eq,
 {
@@ -49,7 +49,7 @@ impl<'a, T> IntoIterator for &'a Singleton<T> {
     }
 }
 
-impl<'a, T: Eq> OrderedSet for &'a Singleton<T> {
+impl<'a, T: Eq> Numbered for &'a Singleton<T> {
     type Element = &'a T;
     type Iterator = Once<&'a T>;
 

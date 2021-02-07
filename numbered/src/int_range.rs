@@ -5,7 +5,7 @@ use num_traits::{
     One, Zero,
 };
 
-use crate::{iter::IntRangeIter, OrderedSet};
+use crate::{iter::IntRangeIter, Numbered};
 
 /// The set of integers between `0` and `len-1`.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -31,7 +31,7 @@ where
     }
 }
 
-impl<Idx> OrderedSet for IntRange<Idx>
+impl<Idx> Numbered for IntRange<Idx>
 where
     Idx: CheckedAdd + CheckedSub + Clone + One + Ord + TryInto<usize> + Zero,
     usize: TryInto<Idx>,

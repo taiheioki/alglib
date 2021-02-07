@@ -1,5 +1,5 @@
-mod ordered_set;
-pub use self::ordered_set::*;
+mod numbered;
+pub use self::numbered::*;
 
 mod int_range;
 pub use self::int_range::*;
