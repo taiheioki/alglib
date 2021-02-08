@@ -2,24 +2,24 @@ use std::iter::FusedIterator;
 
 use crate::iter::IntRangeIter;
 
-/// An auxiliary iterator used in [`MappedSet`](crate::MappedSet).
+/// An auxiliary iterator used in [`FnSet`](crate::FnSet).
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct MappedSetIter<B> {
+pub struct FnSetIter<B> {
     range_iter: IntRangeIter<usize>,
     backward: B,
 }
 
-impl<D, B> MappedSetIter<B>
+impl<D, B> FnSetIter<B>
 where
     B: Fn(usize) -> Option<D>,
 {
-    /// Creates a new [`MappedSetIter`]. The returned iterator is equivalent to `IntRangeIter::new(0, len).map(|i| backward(i).unwrap())`.
+    /// Creates a new [`FnSetIter`]. The returned iterator is equivalent to `IntRangeIter::new(0, len).map(|i| backward(i).unwrap())`.
     ///
     /// # Requirements
     /// `backward(n)` must be non-none for all `n < len`.
     #[inline]
     pub fn new(len: usize, backward: B) -> Self {
-        MappedSetIter {
+        FnSetIter {
             range_iter: IntRangeIter::new(0, len),
             backward,
         }
@@ -30,7 +30,7 @@ where
         i.map(|i| {
             (self.backward)(i).unwrap_or_else(|| {
                 panic!(
-                    "The `MapNum` object has length {}, but `self.backward({})` returned `None`",
+                    "The `MapNum` object has length {}, but `self.backward({})` is `None`",
                     self.range_iter.end(),
                     i
                 )
@@ -39,7 +39,7 @@ where
     }
 }
 
-impl<D, B> Iterator for MappedSetIter<B>
+impl<D, B> Iterator for FnSetIter<B>
 where
     B: Fn(usize) -> Option<D>,
 {
@@ -68,7 +68,7 @@ where
     }
 }
 
-impl<D, B> DoubleEndedIterator for MappedSetIter<B>
+impl<D, B> DoubleEndedIterator for FnSetIter<B>
 where
     B: Fn(usize) -> Option<D>,
 {
@@ -85,7 +85,7 @@ where
     }
 }
 
-impl<D, B> ExactSizeIterator for MappedSetIter<B>
+impl<D, B> ExactSizeIterator for FnSetIter<B>
 where
     B: Fn(usize) -> Option<D>,
 {
@@ -95,7 +95,7 @@ where
     }
 }
 
-impl<T, B> FusedIterator for MappedSetIter<B> where B: Fn(usize) -> Option<T> {}
+impl<T, B> FusedIterator for FnSetIter<B> where B: Fn(usize) -> Option<T> {}
 
 #[cfg(test)]
 mod tests {
@@ -104,7 +104,7 @@ mod tests {
     #[test]
     fn grid_2d() {
         let backward = |i| Some(i).filter(|&i| i < 9).map(|i| (i / 3, i % 3));
-        let mut iter = MappedSetIter::new(9, backward);
+        let mut iter = FnSetIter::new(9, backward);
         assert_eq!(iter.next(), Some((0, 0)));
         assert_eq!(iter.next(), Some((0, 1)));
         assert_eq!(iter.len(), 7);
@@ -118,7 +118,7 @@ mod tests {
     #[test]
     fn range() {
         let backward = |i| Some(i).filter(|&i| i < 100);
-        let mut iter = MappedSetIter::new(100, backward);
+        let mut iter = FnSetIter::new(100, backward);
         let mut range = IntRangeIter::new(0, 100);
         assert_eq!(iter.next(), range.next());
         assert_eq!(iter.len(), range.len());

@@ -65,6 +65,7 @@ impl<D: Set, T> IndexMut<D::Element> for VecMap<D, T> {
 impl<D: Set, T> Map for VecMap<D, T>
 where
     D: Clone,
+    T: Clone,
 {
     type Domain = D;
     type Input = D::Element;
@@ -76,8 +77,8 @@ where
     }
 
     #[inline]
-    fn get_nth(&self, n: usize) -> Option<&T> {
-        self.image.get(n)
+    fn get_nth(&self, n: usize) -> Option<T> {
+        self.image.get(n).cloned()
     }
 }
 
@@ -103,7 +104,7 @@ mod tests {
         let vec = vec![0, 2, 4, 6, 8];
         let mut map = VecMap::new(&vec, vec!['a', 'b', 'c', 'd', 'e']);
         assert_eq!(map[&4], 'c');
-        assert_eq!(map.get(&6), Some(&'d'));
+        assert_eq!(map.get(&6), Some('d'));
         assert_eq!(map.get_nth(6), None);
         map[&8] = 'f';
         assert_eq!(map[&8], 'f');

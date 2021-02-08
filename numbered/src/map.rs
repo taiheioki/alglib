@@ -1,9 +1,7 @@
-use std::ops::Index;
-
 use crate::{IntRange, Set};
 
 /// A trait for an ordered map from [`Set`](crate::Set).
-pub trait Map: Index<<Self as Map>::Input, Output = <Self as Map>::Output> {
+pub trait Map {
     /// The type of the domain of the map.
     type Domain: Set<Element = Self::Input>;
 
@@ -16,17 +14,20 @@ pub trait Map: Index<<Self as Map>::Input, Output = <Self as Map>::Output> {
     /// Returns the domain of the map.
     fn domain(&self) -> Self::Domain;
 
-    /// Returns a reference to the image of the `n`th element in the domain, or `None` if out of range.
-    fn get_nth(&self, n: usize) -> Option<&<Self as Map>::Output>;
+    /// Returns the image of the `n`th element in the domain, or `None` if out of range.
+    fn get_nth(&self, n: usize) -> Option<<Self as Map>::Output>;
 
-    /// Returns a reference to the image of a given element, or `None` if the domain does not contain it.
+    /// Returns the image of a given element, or `None` if the domain does not contain it.
     #[inline]
-    fn get(&self, x: Self::Input) -> Option<&<Self as Map>::Output> {
+    fn get(&self, x: Self::Input) -> Option<<Self as Map>::Output> {
         self.get_nth(self.domain().index_of(x)?)
     }
 }
 
-impl<T> Map for [T] {
+impl<T> Map for [T]
+where
+    T: Clone,
+{
     type Domain = IntRange;
     type Input = usize;
     type Output = T;
@@ -37,8 +38,8 @@ impl<T> Map for [T] {
     }
 
     #[inline]
-    fn get_nth(&self, index: usize) -> Option<&T> {
-        Self::get(self, index)
+    fn get_nth(&self, index: usize) -> Option<T> {
+        Self::get(self, index).cloned()
     }
 }
 
