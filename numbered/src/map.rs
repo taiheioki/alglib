@@ -2,15 +2,15 @@ use std::ops::Index;
 
 use crate::{IntRange, Set};
 
-/// A trait for a map from [`Set`](crate::Set).
+/// A trait for an ordered map from [`Set`](crate::Set).
 pub trait Map: Index<<Self as Map>::Input, Output = <Self as Map>::Output> {
     /// The type of the domain of the map.
     type Domain: Set<Element = Self::Input>;
 
-    /// The type of the input of the map (= `<Self::Domain as Set>::Element`).
+    /// The type of each element in the domain of the map (= `<Self::Domain as Set>::Element`).
     type Input: Eq;
 
-    /// The type of the output of the map.
+    /// The type of the image of each element in the domain under the map.
     type Output;
 
     /// Returns the domain of the map.

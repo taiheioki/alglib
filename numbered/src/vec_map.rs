@@ -2,26 +2,34 @@ use std::ops::{Index, IndexMut};
 
 use crate::{Map, Set};
 
+/// An ordered map implementation represented as [`Vec`].
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct VecMap<D, T> {
     domain: D,
-    data: Vec<T>,
+    image: Vec<T>,
 }
 
 impl<D: Set, T> VecMap<D, T> {
+    /// Creates a new [`VecMap`].
+    ///
+    /// # Panics
+    /// Panics if `domain.len() != image.len()`.
     #[inline]
-    pub fn new(domain: D, data: Vec<T>) -> Self {
-        assert!(domain.len() == data.len());
-        Self { domain, data }
+    pub fn new(domain: D, image: Vec<T>) -> Self {
+        assert!(domain.len() == image.len());
+        Self { domain, image }
     }
 
+    /// Returns a mutable reference to the image of a given element, or `None` if the domain does not contain it.
     #[inline]
-    pub fn get_mut(&mut self, element: <D as Set>::Element) -> Option<&mut T> {
-        self.data.get_mut(self.domain.index_of(element)?)
+    pub fn get_mut(&mut self, element: D::Element) -> Option<&mut T> {
+        self.image.get_mut(self.domain.index_of(element)?)
     }
 
+    /// Returns a mutable reference to the image of the `n`th element in the domain, or `None` if the domain does not contain it.
     #[inline]
     pub fn get_mut_nth(&mut self, n: usize) -> Option<&mut T> {
-        self.data.get_mut(n)
+        self.image.get_mut(n)
     }
 }
 
@@ -29,27 +37,28 @@ impl<D: Set, T> VecMap<D, T>
 where
     T: Clone,
 {
+    /// Fills the image elements with clones of `value`.
     #[inline]
     pub fn fill(&mut self, value: T) {
-        for i in 0..self.data.len() {
-            self.data[i] = value.clone();
+        for i in 0..self.image.len() {
+            self.image[i].clone_from(&value);
         }
     }
 }
 
-impl<D: Set, T> Index<<D as Set>::Element> for VecMap<D, T> {
+impl<D: Set, T> Index<D::Element> for VecMap<D, T> {
     type Output = T;
 
     #[inline]
     fn index(&self, index: D::Element) -> &T {
-        self.data.index(self.domain.index_of(index).unwrap())
+        self.image.index(self.domain.index_of(index).unwrap())
     }
 }
 
-impl<D: Set, T> IndexMut<<D as Set>::Element> for VecMap<D, T> {
+impl<D: Set, T> IndexMut<D::Element> for VecMap<D, T> {
     #[inline]
     fn index_mut(&mut self, index: D::Element) -> &mut T {
-        self.data.index_mut(self.domain.index_of(index).unwrap())
+        self.image.index_mut(self.domain.index_of(index).unwrap())
     }
 }
 
@@ -68,7 +77,7 @@ where
 
     #[inline]
     fn get_nth(&self, n: usize) -> Option<&T> {
-        self.data.get(n)
+        self.image.get(n)
     }
 }
 
@@ -81,8 +90,8 @@ mod tests {
     #[test]
     fn test1() {
         let domain = IntRange::new(5);
-        let data = domain.iter().map(|x| 2 * x).collect();
-        let mut map = VecMap::new(domain, data);
+        let output = domain.iter().map(|x| 2 * x).collect();
+        let mut map = VecMap::new(domain, output);
         assert_eq!(map[0], 0);
         assert_eq!(map.get(10), None);
         map[0] = 3;

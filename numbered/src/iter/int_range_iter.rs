@@ -84,7 +84,7 @@ where
             self.start = s.clone() + T::one();
             Some(s)
         } else {
-            self.start = self.end.clone();
+            self.start.clone_from(&self.end);
             None
         }
     }
@@ -131,7 +131,7 @@ where
             self.end = e - T::one();
             Some(self.end.clone())
         } else {
-            self.end = self.start.clone();
+            self.end.clone_from(&self.start);
             None
         }
     }

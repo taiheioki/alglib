@@ -1,6 +1,6 @@
 use crate::{iter::MappedSetIter, Set};
 
-/// The ordered set designated by a forward lookup map (index -> element) and the reverse lookup map (element -> index).
+/// The ordered set represented by a forward lookup map (index -> element) and the reverse lookup map (element -> index).
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct MappedSet<F, R> {
     len: usize,
@@ -43,7 +43,7 @@ where
     /// `forward_lookup(n)` is non-none if and only if `n < len` for all `n: usize`.
     #[inline]
     pub fn with_len(len: usize, forward_lookup: F, reverse_lookup: R) -> Self {
-        debug_assert!(forward_lookup(len).is_none());
+        assert!(forward_lookup(len).is_none());
         MappedSet {
             len,
             forward_lookup,

@@ -1,4 +1,4 @@
-/// A trait for a finite set indexed from `0` to `N-1`, where `N` is the cardinality of the set.
+/// A trait for a finite, ordered set indexed from `0` to `N-1`, where `N` is the cardinality of the set.
 pub trait Set {
     /// The type of the set elements.
     type Element: Eq;
