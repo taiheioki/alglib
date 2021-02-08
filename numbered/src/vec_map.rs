@@ -13,6 +13,28 @@ impl<D: Set, T> VecMap<D, T> {
         assert!(domain.len() == data.len());
         Self { domain, data }
     }
+
+    #[inline]
+    pub fn get_mut(&mut self, element: <D as Set>::Element) -> Option<&mut T> {
+        self.data.get_mut(self.domain.index_of(element)?)
+    }
+
+    #[inline]
+    pub fn get_mut_nth(&mut self, n: usize) -> Option<&mut T> {
+        self.data.get_mut(n)
+    }
+}
+
+impl<D: Set, T> VecMap<D, T>
+where
+    T: Clone,
+{
+    #[inline]
+    pub fn fill(&mut self, value: T) {
+        for i in 0..self.data.len() {
+            self.data[i] = value.clone();
+        }
+    }
 }
 
 impl<D: Set, T> Index<<D as Set>::Element> for VecMap<D, T> {
@@ -45,8 +67,8 @@ where
     }
 
     #[inline]
-    fn get_by_index(&self, index: usize) -> Option<&T> {
-        self.data.get(index)
+    fn get_nth(&self, n: usize) -> Option<&T> {
+        self.data.get(n)
     }
 }
 
@@ -73,7 +95,7 @@ mod tests {
         let mut map = VecMap::new(&vec, vec!['a', 'b', 'c', 'd', 'e']);
         assert_eq!(map[&4], 'c');
         assert_eq!(map.get(&6), Some(&'d'));
-        assert_eq!(map.get_by_index(6), None);
+        assert_eq!(map.get_nth(6), None);
         map[&8] = 'f';
         assert_eq!(map[&8], 'f');
     }

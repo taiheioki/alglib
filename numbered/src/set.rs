@@ -9,7 +9,7 @@ pub trait Set {
     /// Returns an iterator that enumerates the set elements in ascending order of their indices.
     fn iter(&self) -> Self::Iterator;
 
-    /// Returns the `n`th element of the iterator.
+    /// Returns the `n`th element of the set, or `None` if out of range.
     #[inline]
     fn nth(&self, n: usize) -> Option<Self::Element> {
         self.iter().nth(n)
@@ -73,6 +73,7 @@ where
     type Element = E;
     type Iterator = std::option::IntoIter<E>;
 
+    #[inline]
     fn iter(&self) -> Self::Iterator {
         self.clone().into_iter()
     }
@@ -85,6 +86,7 @@ where
     type Element = &'a E;
     type Iterator = std::option::Iter<'a, E>;
 
+    #[inline]
     fn iter(&self) -> Self::Iterator {
         Option::iter(self)
     }
