@@ -8,7 +8,7 @@ use num_traits::{
 use crate::{iter::IntRangeIter, Set};
 
 /// The set of integers between `0` and `len-1`.
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct IntRange<Idx = usize> {
     len: Idx,
 }

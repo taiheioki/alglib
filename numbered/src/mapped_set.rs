@@ -1,7 +1,7 @@
 use crate::{iter::MappedSetIter, Set};
 
 /// The ordered set represented by a forward lookup map (index -> element) and the reverse lookup map (element -> index).
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct MappedSet<F, R> {
     len: usize,
     forward_lookup: F,

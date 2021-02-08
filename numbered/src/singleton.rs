@@ -3,7 +3,7 @@ use std::iter::{once, Once};
 use crate::Set;
 
 /// A singleton (set of cardinality one).
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct Singleton<E> {
     element: E,
 }

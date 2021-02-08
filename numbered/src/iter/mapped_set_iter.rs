@@ -3,7 +3,7 @@ use std::iter::FusedIterator;
 use crate::iter::IntRangeIter;
 
 /// An auxiliary iterator used in [`MappedSet`](crate::MappedSet).
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct MappedSetIter<B> {
     range_iter: IntRangeIter<usize>,
     backward: B,

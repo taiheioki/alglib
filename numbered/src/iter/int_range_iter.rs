@@ -6,7 +6,7 @@ use num_traits::{
 };
 
 /// An iterator over the half-open range [start, end).
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct IntRangeIter<T> {
     start: T,
     end: T,
