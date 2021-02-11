@@ -1,4 +1,6 @@
-/// A trait for a finite, ordered set indexed from `0` to `N-1`, where `N` is the cardinality of the set.
+/// A trait for a finite and ordered set.
+///
+/// Set elements are indexed in the range `0..self.len()`.
 pub trait Set {
     /// The type of the set elements.
     type Element: Eq;
@@ -11,20 +13,20 @@ pub trait Set {
 
     /// Returns the `n`th element of the set, or `None` if out of range.
     #[inline]
-    fn nth(&self, n: usize) -> Option<Self::Element> {
-        self.iter().nth(n)
+    fn index(&self, index: usize) -> Option<Self::Element> {
+        self.iter().nth(index)
     }
 
     /// Returns the index of the specified element, or `None` if the set does not contain it.
     #[inline]
-    fn index_of(&self, x: Self::Element) -> Option<usize> {
-        self.iter().position(|y| x == y)
+    fn index_of(&self, element: Self::Element) -> Option<usize> {
+        self.iter().position(|x| x == element)
     }
 
     /// Returns `true` if the set contains the specified element.
     #[inline]
-    fn contains(&self, x: Self::Element) -> bool {
-        self.index_of(x).is_some()
+    fn contains(&self, element: Self::Element) -> bool {
+        self.index_of(element).is_some()
     }
 
     /// Returns the cardinality of the set.
@@ -99,24 +101,24 @@ mod tests {
     #[test]
     fn slice_ref() {
         let set: &[i32] = &[2, 3, 5, 7, 11];
-        assert_eq!(set.nth(0), Some(&2));
+        assert_eq!(set.index(0), Some(&2));
     }
 
     #[test]
     fn vec_ref() {
         let set = &vec![2, 3, 5, 7, 11];
-        assert_eq!(set.nth(0), Some(&2));
+        assert_eq!(set.index(0), Some(&2));
     }
 
     #[test]
     fn option() {
         let set = Some('a');
-        assert_eq!(set.nth(0), Some('a'));
+        assert_eq!(set.index(0), Some('a'));
     }
 
     #[test]
     fn option_ref() {
         let set = &Some('a');
-        assert_eq!((&set).nth(0), Some(&'a'));
+        assert_eq!((&set).index(0), Some(&'a'));
     }
 }

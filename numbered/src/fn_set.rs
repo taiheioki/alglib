@@ -82,8 +82,8 @@ where
     }
 
     #[inline]
-    fn index_of(&self, x: E) -> Option<usize> {
-        (self.reverse_lookup)(x)
+    fn index_of(&self, element: E) -> Option<usize> {
+        (self.reverse_lookup)(element)
     }
 }
 

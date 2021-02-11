@@ -77,8 +77,8 @@ where
     }
 
     #[inline]
-    fn get_nth(&self, n: usize) -> Option<T> {
-        self.image.get(n).cloned()
+    fn get_index(&self, index: usize) -> Option<T> {
+        self.image.get(index).cloned()
     }
 }
 
@@ -105,7 +105,7 @@ mod tests {
         let mut map = VecMap::new(&vec, vec!['a', 'b', 'c', 'd', 'e']);
         assert_eq!(map[&4], 'c');
         assert_eq!(map.get(&6), Some('d'));
-        assert_eq!(map.get_nth(6), None);
+        assert_eq!(map.get_index(6), None);
         map[&8] = 'f';
         assert_eq!(map[&8], 'f');
     }

@@ -17,8 +17,8 @@ where
     }
 
     #[inline]
-    fn nth(&self, n: usize) -> Option<&'a E> {
-        self.get_index(n)
+    fn index(&self, n: usize) -> Option<&'a E> {
+        IndexSet::get_index(self, n)
     }
 
     #[inline]
@@ -55,8 +55,8 @@ where
     }
 
     #[inline]
-    fn nth(&self, n: usize) -> Option<&'a E> {
-        self.get_index(n).map(|(key, _)| key)
+    fn index(&self, n: usize) -> Option<&'a E> {
+        IndexMap::get_index(self, n).map(|(key, _)| key)
     }
 
     #[inline]
@@ -94,8 +94,8 @@ where
     }
 
     #[inline]
-    fn get_nth(&self, n: usize) -> Option<&'a T> {
-        self.get_index(n).map(|(_, value)| value)
+    fn get_index(&self, n: usize) -> Option<&'a T> {
+        IndexMap::get_index(self, n).map(|(_, value)| value)
     }
 
     #[inline]
@@ -119,7 +119,7 @@ mod tests {
         };
 
         assert_eq!((&set).len(), 3);
-        assert_eq!((&set).nth(0), Some(&"dog"));
+        assert_eq!((&set).index(0), Some(&"dog"));
         assert_eq!((&set).index_of(&"cat"), Some(1));
         assert_eq!((&set).contains(&"human"), true);
     }
@@ -133,8 +133,8 @@ mod tests {
             "tasaki" => "daiki",
         };
 
-        assert_eq!((&map).get("naruse"), Some(&"jun"));
-        assert_eq!((&map).get_nth(2), Some(&"natsuki"));
-        assert_eq!((&map).get_nth(4), None);
+        assert_eq!(Map::get(&&map, &"naruse"), Some(&"jun"));
+        assert_eq!(Map::get_index(&&map, 2), Some(&"natsuki"));
+        assert_eq!(Map::get_index(&&map, 4), None);
     }
 }

@@ -45,8 +45,13 @@ where
     }
 
     #[inline]
-    fn index_of(&self, x: Idx) -> Option<usize> {
-        Some(x)
+    fn index(&self, index: usize) -> Option<Idx> {
+        index.try_into().ok()
+    }
+
+    #[inline]
+    fn index_of(&self, element: Idx) -> Option<usize> {
+        Some(element)
             .filter(|x| Idx::zero() <= *x && *x < self.len)
             .map(|x| x.try_into().ok().unwrap())
     }

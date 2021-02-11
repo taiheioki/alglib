@@ -26,13 +26,13 @@ where
     }
 
     #[inline]
-    fn apply(&self, i: Option<usize>) -> Option<D> {
-        i.map(|i| {
-            (self.backward)(i).unwrap_or_else(|| {
+    fn apply(&self, index: Option<usize>) -> Option<D> {
+        index.map(|index| {
+            (self.backward)(index).unwrap_or_else(|| {
                 panic!(
                     "The `MapNum` object has length {}, but `self.backward({})` is `None`",
                     self.range_iter.end(),
-                    i
+                    index
                 )
             })
         })
@@ -47,8 +47,8 @@ where
 
     #[inline]
     fn next(&mut self) -> Option<D> {
-        let i = self.range_iter.next();
-        self.apply(i)
+        let index = self.range_iter.next();
+        self.apply(index)
     }
 
     #[inline]
@@ -58,8 +58,8 @@ where
 
     #[inline]
     fn nth(&mut self, n: usize) -> Option<D> {
-        let i = self.range_iter.nth(n);
-        self.apply(i)
+        let index = self.range_iter.nth(n);
+        self.apply(index)
     }
 
     #[inline]
@@ -74,14 +74,14 @@ where
 {
     #[inline]
     fn next_back(&mut self) -> Option<D> {
-        let i = self.range_iter.next_back();
-        self.apply(i)
+        let index = self.range_iter.next_back();
+        self.apply(index)
     }
 
     #[inline]
     fn nth_back(&mut self, n: usize) -> Option<D> {
-        let i = self.range_iter.nth_back(n);
-        self.apply(i)
+        let index = self.range_iter.nth_back(n);
+        self.apply(index)
     }
 }
 

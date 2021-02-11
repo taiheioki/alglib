@@ -33,13 +33,16 @@ where
     }
 
     #[inline]
-    fn get(&self, x: D::Element) -> Option<T> {
-        Some((self.function)(self.domain.index_of(x.clone())?, x))
+    fn get(&self, element: D::Element) -> Option<T> {
+        Some((self.function)(
+            self.domain.index_of(element.clone())?,
+            element,
+        ))
     }
 
     #[inline]
-    fn get_nth(&self, n: usize) -> Option<T> {
-        Some((self.function)(n, self.domain.nth(n)?))
+    fn get_index(&self, index: usize) -> Option<T> {
+        Some((self.function)(index, self.domain.index(index)?))
     }
 }
 
@@ -67,7 +70,7 @@ mod test {
 
         assert_eq!(map.get((5, 5)), Some(50));
         assert_eq!(map.get((1, 10)), None);
-        assert_eq!(map.get_nth(80), Some(128));
-        assert_eq!(map.get_nth(81), None);
+        assert_eq!(map.get_index(80), Some(128));
+        assert_eq!(map.get_index(81), None);
     }
 }

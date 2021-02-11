@@ -14,14 +14,14 @@ pub trait Map {
     /// Returns the domain of the map.
     fn domain(&self) -> Self::Domain;
 
-    /// Returns the image of the `n`th element in the domain, or `None` if out of range.
-    fn get_nth(&self, n: usize) -> Option<<Self as Map>::Output>;
-
     /// Returns the image of a given element, or `None` if the domain does not contain it.
     #[inline]
-    fn get(&self, x: Self::Input) -> Option<<Self as Map>::Output> {
-        self.get_nth(self.domain().index_of(x)?)
+    fn get(&self, element: Self::Input) -> Option<<Self as Map>::Output> {
+        self.get_index(self.domain().index_of(element)?)
     }
+
+    /// Returns the image of the `n`th element in the domain, or `None` if out of range.
+    fn get_index(&self, n: usize) -> Option<<Self as Map>::Output>;
 }
 
 impl<T> Map for [T]
@@ -38,7 +38,7 @@ where
     }
 
     #[inline]
-    fn get_nth(&self, index: usize) -> Option<T> {
+    fn get_index(&self, index: usize) -> Option<T> {
         Self::get(self, index).cloned()
     }
 }
@@ -51,7 +51,7 @@ mod tests {
     fn array() {
         let map = [2, 3, 5, 7, 11];
         assert_eq!(map.get(2), Some(&5));
-        assert_eq!(map.get_nth(10), None);
+        assert_eq!(map.get_index(10), None);
         assert_eq!(map.domain().iter().collect::<Vec<_>>(), vec![0, 1, 2, 3, 4])
     }
 
@@ -59,7 +59,7 @@ mod tests {
     fn vec() {
         let map = vec![2, 3, 5, 7, 11];
         assert_eq!(map.get(2), Some(&5));
-        assert_eq!(map.get_nth(10), None);
+        assert_eq!(map.get_index(10), None);
         assert_eq!(map.domain().iter().collect::<Vec<_>>(), vec![0, 1, 2, 3, 4])
     }
 }

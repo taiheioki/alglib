@@ -3,7 +3,7 @@ use std::iter::{once, Once};
 use crate::Set;
 
 /// A singleton (set of cardinality one).
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Singleton<E> {
     element: E,
 }
@@ -71,8 +71,8 @@ mod tests {
         let singleton = Singleton::new('a');
         assert_eq!(singleton.index_of('a'), Some(0));
         assert_eq!(singleton.index_of('b'), None);
-        assert_eq!(singleton.nth(0), Some('a'));
-        assert_eq!(singleton.nth(1), None);
+        assert_eq!(singleton.index(0), Some('a'));
+        assert_eq!(singleton.index(1), None);
         assert_eq!(singleton.iter().collect::<Vec<_>>(), vec!['a']);
         assert_eq!(singleton.len(), 1);
         assert_eq!(singleton.contains('a'), true);
