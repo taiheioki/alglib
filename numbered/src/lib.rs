@@ -7,6 +7,12 @@ pub use self::int_range::*;
 mod fn_set;
 pub use self::fn_set::*;
 
+#[cfg(feature = "indexmap")]
+mod index_map;
+
+#[cfg(feature = "indexmap")]
+pub use self::index_map::*;
+
 mod singleton;
 pub use self::singleton::*;
 

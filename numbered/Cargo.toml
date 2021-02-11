@@ -19,3 +19,4 @@ rustdoc-args = [
 
 [dependencies]
 num-traits = "0.2"
+indexmap = { version = "1.6.1", optional = true }
