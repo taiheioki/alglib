@@ -1,5 +1,5 @@
 [package]
-name = "numbered"
+name = "alglib-set"
 version = "0.1.0"
 authors = ["Taihei Oki <t.oki.natrium@gmail.com>"]
 description = "Library for numbered finite sets."

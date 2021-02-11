@@ -16,7 +16,7 @@ where
     /// Creates a new [`FnSetIter`]. The returned iterator is equivalent to `IntRangeIter::new(0, len).map(|i| backward(i).unwrap())`.
     ///
     /// # Requirements
-    /// `backward(n)` must be non-none for all `n < len`.
+    /// `backward(i)` must be non-none for all `i < len`.
     #[inline]
     pub fn new(len: usize, backward: B) -> Self {
         FnSetIter {

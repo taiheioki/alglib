@@ -137,19 +137,9 @@ where
     }
 }
 
-impl<T> ExactSizeIterator for IntRangeIter<T>
-where
-    T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
-    usize: TryInto<T>,
-{
-}
+impl<T> ExactSizeIterator for IntRangeIter<T> where Self: Iterator {}
 
-impl<T> FusedIterator for IntRangeIter<T>
-where
-    T: CheckedAdd + CheckedSub + Clone + One + Ord + Sub<Output = T> + TryInto<usize>,
-    usize: TryInto<T>,
-{
-}
+impl<T> FusedIterator for IntRangeIter<T> where Self: Iterator {}
 
 #[cfg(test)]
 mod tests {
