@@ -55,13 +55,11 @@ where
 
     #[inline]
     fn next(&mut self) -> Option<T> {
-        if self.start < self.end {
+        (self.start < self.end).then(|| {
             let result = self.start.clone();
             self.start = result.clone() + T::one();
-            Some(result)
-        } else {
-            None
-        }
+            result
+        })
     }
 
     #[inline]
@@ -112,12 +110,10 @@ where
 {
     #[inline]
     fn next_back(&mut self) -> Option<T> {
-        if self.start < self.end {
+        (self.start < self.end).then(|| {
             self.end = self.end.clone() - T::one();
-            Some(self.end.clone())
-        } else {
-            None
-        }
+            self.end.clone()
+        })
     }
 
     #[inline]

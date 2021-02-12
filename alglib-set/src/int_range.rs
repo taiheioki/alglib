@@ -51,9 +51,7 @@ where
 
     #[inline]
     fn index_of(&self, element: Idx) -> Option<usize> {
-        Some(element)
-            .filter(|x| Idx::zero() <= *x && *x < self.len)
-            .map(|x| x.try_into().ok().unwrap())
+        (Idx::zero() <= element && element < self.len).then(|| element.try_into().ok().unwrap())
     }
 }
 
