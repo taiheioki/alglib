@@ -46,6 +46,18 @@ where
     }
 }
 
+impl<D: Set, T> VecMap<D, T>
+where
+    T: Default,
+{
+    #[inline]
+    pub fn new_by_default(domain: D) -> Self {
+        let mut image = Vec::with_capacity(domain.len());
+        image.resize_with(image.len(), T::default);
+        Self { domain, image }
+    }
+}
+
 impl<D: Set, T> Index<D::Element> for VecMap<D, T> {
     type Output = T;
 

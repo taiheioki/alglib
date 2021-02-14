@@ -11,7 +11,7 @@ pub trait Set {
     /// Returns an iterator that enumerates the set elements in ascending order of their indices.
     fn iter(&self) -> Self::Iterator;
 
-    /// Returns the `index`th element of the set, or `None` if out of range.
+    /// Returns the set element of a given index, or `None` if out of range.
     #[inline]
     fn index(&self, index: usize) -> Option<Self::Element> {
         self.iter().nth(index)
