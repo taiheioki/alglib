@@ -33,24 +33,24 @@ where
 
 impl<Idx> Set for IntRange<Idx>
 where
-    Idx: CheckedAdd + CheckedSub + Clone + One + Ord + TryInto<usize> + Zero,
+    Idx: CheckedAdd + CheckedSub + Copy + One + Ord + TryInto<usize> + Zero,
     usize: TryInto<Idx>,
 {
     type Element = Idx;
     type Iterator = IntRangeIter<Idx>;
 
     #[inline]
-    fn iter(&self) -> IntRangeIter<Idx> {
-        IntRangeIter::new(Idx::zero(), self.len.clone())
+    fn iter(self) -> IntRangeIter<Idx> {
+        IntRangeIter::new(Idx::zero(), self.len)
     }
 
     #[inline]
-    fn index(&self, index: usize) -> Option<Idx> {
+    fn index(self, index: usize) -> Option<Idx> {
         index.try_into().ok()
     }
 
     #[inline]
-    fn index_of(&self, element: Idx) -> Option<usize> {
+    fn index_of(self, element: Idx) -> Option<usize> {
         (Idx::zero() <= element && element < self.len).then(|| element.try_into().ok().unwrap())
     }
 }

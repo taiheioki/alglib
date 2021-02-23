@@ -26,19 +26,6 @@ impl<E> IntoIterator for Singleton<E> {
     }
 }
 
-impl<E> Set for Singleton<E>
-where
-    E: Clone + Eq,
-{
-    type Element = E;
-    type Iterator = Once<E>;
-
-    #[inline]
-    fn iter(&self) -> Self::Iterator {
-        once(self.element.clone())
-    }
-}
-
 impl<'a, E> IntoIterator for &'a Singleton<E> {
     type Item = &'a E;
     type IntoIter = Once<&'a E>;
@@ -57,7 +44,7 @@ where
     type Iterator = Once<&'a E>;
 
     #[inline]
-    fn iter(&self) -> Self::Iterator {
+    fn iter(self) -> Self::Iterator {
         once(&self.element)
     }
 }
@@ -69,13 +56,13 @@ mod tests {
     #[test]
     fn singleton() {
         let singleton = Singleton::new('a');
-        assert_eq!(singleton.index_of('a'), Some(0));
-        assert_eq!(singleton.index_of('b'), None);
-        assert_eq!(singleton.index(0), Some('a'));
+        assert_eq!(singleton.index_of(&'a'), Some(0));
+        assert_eq!(singleton.index_of(&'b'), None);
+        assert_eq!(singleton.index(0), Some(&'a'));
         assert_eq!(singleton.index(1), None);
-        assert_eq!(singleton.iter().collect::<Vec<_>>(), vec!['a']);
+        assert_eq!(singleton.iter().collect::<Vec<_>>(), vec![&'a']);
         assert_eq!(singleton.len(), 1);
-        assert_eq!(singleton.contains('a'), true);
+        assert_eq!(singleton.contains(&'a'), true);
     }
 
     fn check_first<S: Set>(set: &S, x: S::Element) {
@@ -85,8 +72,6 @@ mod tests {
     #[test]
     fn singleton_ref() {
         let singleton = Singleton::new(1usize);
-        check_first(&singleton, 1usize);
-
         let singleton_ref = &singleton;
         check_first(&singleton_ref, &1usize);
     }

@@ -12,32 +12,32 @@ where
     type Iterator = Iter<'a, E>;
 
     #[inline]
-    fn iter(&self) -> Self::Iterator {
+    fn iter(self) -> Self::Iterator {
         IndexSet::iter(self)
     }
 
     #[inline]
-    fn index(&self, n: usize) -> Option<&'a E> {
+    fn index(self, n: usize) -> Option<&'a E> {
         IndexSet::get_index(self, n)
     }
 
     #[inline]
-    fn index_of(&self, x: &E) -> Option<usize> {
+    fn index_of(self, x: &E) -> Option<usize> {
         self.get_index_of(x)
     }
 
     #[inline]
-    fn contains(&self, x: &E) -> bool {
+    fn contains(self, x: &E) -> bool {
         IndexSet::contains(self, x)
     }
 
     #[inline]
-    fn len(&self) -> usize {
+    fn len(self) -> usize {
         IndexSet::len(self)
     }
 
     #[inline]
-    fn is_empty(&self) -> bool {
+    fn is_empty(self) -> bool {
         IndexSet::is_empty(self)
     }
 }
@@ -50,32 +50,32 @@ where
     type Iterator = Keys<'a, E, T>;
 
     #[inline]
-    fn iter(&self) -> Self::Iterator {
+    fn iter(self) -> Self::Iterator {
         self.keys()
     }
 
     #[inline]
-    fn index(&self, n: usize) -> Option<&'a E> {
+    fn index(self, n: usize) -> Option<&'a E> {
         IndexMap::get_index(self, n).map(|(key, _)| key)
     }
 
     #[inline]
-    fn index_of(&self, x: &E) -> Option<usize> {
+    fn index_of(self, x: &E) -> Option<usize> {
         self.get_index_of(x)
     }
 
     #[inline]
-    fn contains(&self, x: &E) -> bool {
+    fn contains(self, x: &E) -> bool {
         self.contains_key(x)
     }
 
     #[inline]
-    fn len(&self) -> usize {
+    fn len(self) -> usize {
         IndexMap::len(self)
     }
 
     #[inline]
-    fn is_empty(&self) -> bool {
+    fn is_empty(self) -> bool {
         IndexMap::is_empty(self)
     }
 }

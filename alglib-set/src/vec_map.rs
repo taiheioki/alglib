@@ -85,7 +85,7 @@ where
 
     #[inline]
     fn domain(&self) -> D {
-        self.domain.clone()
+        self.domain
     }
 
     #[inline]

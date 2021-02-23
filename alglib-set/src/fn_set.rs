@@ -70,19 +70,19 @@ where
 impl<E, F, R> Set for FnSet<F, R>
 where
     E: Eq,
-    F: Fn(usize) -> Option<E> + Clone,
-    R: Fn(E) -> Option<usize>,
+    F: Fn(usize) -> Option<E> + Copy,
+    R: Fn(E) -> Option<usize> + Copy,
 {
     type Element = E;
     type Iterator = FnSetIter<F>;
 
     #[inline]
-    fn iter(&self) -> Self::Iterator {
-        FnSetIter::new(self.len, self.forward_lookup.clone())
+    fn iter(self) -> Self::Iterator {
+        FnSetIter::new(self.len, self.forward_lookup)
     }
 
     #[inline]
-    fn index_of(&self, element: E) -> Option<usize> {
+    fn index_of(self, element: E) -> Option<usize> {
         (self.reverse_lookup)(element)
     }
 }
