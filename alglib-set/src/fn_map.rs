@@ -34,10 +34,7 @@ where
 
     #[inline]
     fn get(&self, element: D::Element) -> Option<T> {
-        Some((self.function)(
-            self.domain.index_of(element.clone())?,
-            element,
-        ))
+        Some((self.function)(self.domain.index_of(element)?, element))
     }
 
     #[inline]

@@ -69,7 +69,7 @@ where
 
 impl<E, F, R> Set for FnSet<F, R>
 where
-    E: Eq,
+    E: Copy + Eq,
     F: Fn(usize) -> Option<E> + Copy,
     R: Fn(E) -> Option<usize> + Copy,
 {
@@ -134,21 +134,5 @@ mod tests {
             set.iter().collect::<Vec<_>>(),
             domain.iter().collect::<Vec<_>>()
         );
-    }
-
-    #[test]
-    fn string() {
-        let domain: Vec<_> = vec!["zero", "one", "two", "three"]
-            .iter()
-            .map(|s| s.to_string())
-            .collect();
-        let forward = |i: usize| domain.get(i).map(|s| (*s).clone());
-        let reverse = |s: String| domain.iter().position(|t| *t == s);
-
-        let set = FnSet::new(forward, reverse);
-        assert_eq!(set.len(), 4);
-        assert_eq!(set.index_of(domain[1].clone()), Some(1));
-        assert_eq!(set.index_of("four".to_string()), None);
-        assert_eq!(set.iter().collect::<Vec<_>>(), domain);
     }
 }

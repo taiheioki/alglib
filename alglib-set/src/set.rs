@@ -3,7 +3,7 @@
 /// Set elements are indexed in the range `0..self.len()`.
 pub trait Set: Copy {
     /// The type of the set elements.
-    type Element: Eq;
+    type Element: Copy + Eq;
 
     /// The type of an iterator that enumerates the set elements in ascending order of their indices.
     type Iterator: ExactSizeIterator<Item = Self::Element>;
